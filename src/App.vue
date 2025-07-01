@@ -100,53 +100,69 @@ onMounted(() => {
 const sortChoice = ref(null)
 // a save location for the previous sorting choice to permit sorting in reverse
 
+function filterWithPumpstacks(afdeling) {
+  const result = [];
+
+  const isFloor =
+    ['main floor', '1st floor', '2nd floor', '3rd floor', '4th floor', '5th floor'].includes(afdeling);
+
+  for (const item of PumpStackInfusions) {
+    // Regular infusions
+    if (!item.pumps) {
+      const match = isFloor
+        ? (afdeling === 'main floor'
+          ? item.floor?.substring(0, 4) === afdeling.substring(0, 4)
+          : item.floor?.substring(0, 3) === afdeling.substring(0, 3))
+        : item.department === afdeling;
+
+      if (match) {
+        result.push(item);
+      }
+    }
+
+    // Pumpstacks
+    if (Array.isArray(item.pumps)) {
+      const filteredPumps = item.pumps.filter((pump) => {
+        return isFloor
+          ? (afdeling === 'main floor'
+            ? pump.floor?.substring(0, 4) === afdeling.substring(0, 4)
+            : pump.floor?.substring(0, 3) === afdeling.substring(0, 3))
+          : pump.department === afdeling;
+      });
+
+      if (filteredPumps.length > 0) {
+        result.push({
+          id_stack_number: item.id_stack_number,
+          pumps: filteredPumps,
+        });
+      }
+    }
+  }
+
+  return result;
+}
+
 function filterAllInfusions(afdeling) {
-  selectedButtoneStore.currentDepartment = afdeling
-  if (
-    ['main floor', '1st floor', '2nd floor', '3rd floor', '4th floor', '5th floor'].includes(
-      afdeling,
-    )
-  ) {
-    if (afdeling === 'main floor') {
-      currentInfusions = PumpStackInfusions.filter(
-        (infusion) => infusion.floor === afdeling.substring(0, 4),
-      )
-    } else {
-      currentInfusions = PumpStackInfusions.filter(
-        (infusion) => infusion.floor === afdeling.substring(0, 3),
-      )
-    }
-    if (window.ImageMapPro) {
-      sortChoice.value = afdeling
-      window.ImageMapPro.changeArtboard('diakonessenhuis', afdeling)
-    }
-  } else {
-    currentInfusions = PumpStackInfusions.filter((infusion) => infusion.department === afdeling)
-    if (window.ImageMapPro) {
-      window.ImageMapPro.changeArtboard('diakonessenhuis', currentInfusions[0].floor + ' floor')
-      window.ImageMapPro.highlightObject('diakonessenhuis', afdeling)
+  selectedButtoneStore.currentDepartment = afdeling;
+  currentInfusions = filterWithPumpstacks(afdeling);
+
+  if (window.ImageMapPro) {
+    const isFloor = ['main floor', '1st floor', '2nd floor', '3rd floor', '4th floor', '5th floor'].includes(afdeling);
+
+    if (isFloor) {
+      sortChoice.value = afdeling;
+      window.ImageMapPro.changeArtboard('diakonessenhuis', afdeling);
+    } else if (currentInfusions.length > 0) {
+      const first = currentInfusions.find((inf) => !inf.pumps) || currentInfusions[0].pumps?.[0];
+      const floor = first?.floor || '';
+      window.ImageMapPro.changeArtboard('diakonessenhuis', floor + ' floor');
+      window.ImageMapPro.highlightObject('diakonessenhuis', afdeling);
     }
   }
 }
 function filterAllInfusionsNoMap(afdeling) {
-  selectedButtoneStore.currentDepartment = afdeling
-  if (
-    ['main floor', '1st floor', '2nd floor', '3rd floor', '4th floor', '5th floor'].includes(
-      afdeling,
-    )
-  ) {
-    if (afdeling === 'main floor') {
-      currentInfusions = PumpStackInfusions.filter(
-        (infusion) => infusion.floor === afdeling.substring(0, 4),
-      )
-    } else {
-      currentInfusions = PumpStackInfusions.filter(
-        (infusion) => infusion.floor === afdeling.substring(0, 3),
-      )
-    }
-  } else {
-    currentInfusions = PumpStackInfusions.filter((infusion) => infusion.department === afdeling)
-  }
+  selectedButtoneStore.currentDepartment = afdeling;
+  currentInfusions = filterWithPumpstacks(afdeling);
 }
 
 function returnToAllInfusions() {
@@ -445,7 +461,7 @@ const toggleGroupItemClasses =
             />
 
             <!-- Stacked infusions -->
-            <div v-else class="border border-gray-500 rounded-xl bg-blue-100  shadow">
+            <div v-else class="border border-gray-500 rounded-xl bg-white  shadow">
               <div class="font-semibold mb-2 text-gray-700 text-center">
                 Stack: {{ item.id_stack_number }}
               </div>
