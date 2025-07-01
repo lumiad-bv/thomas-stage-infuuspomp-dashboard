@@ -1,7 +1,6 @@
 import math
 import random
 import json
-from token import STRING
 
 # This script generates dummy data for the development of the Lumiad dashboard. it is not real data and should not be treated as such
 

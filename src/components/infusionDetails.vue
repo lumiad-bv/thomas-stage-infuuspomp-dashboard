@@ -1,7 +1,7 @@
 <script setup>
 import { ref, watch, onMounted, computed } from 'vue'
 import { useRoute } from 'vue-router'
-import dummy from '@/assets/generated_data_unique_with_time.json'
+// import dummy from '@/assets/generated_data_unique_with_time.json'
 import PumpStackInfusions from '@/assets/generated_data_with_pumpstacks.json'
 import { ProgressIndicator, ProgressRoot } from 'radix-vue'
 const infusion = ref(null)
@@ -26,9 +26,9 @@ function findInfusionById(id) {
   return null; // Not found
 }
 // Fetch the infusion based on the ID
-const fetchItem = (id) => {
-  infusion.value = allInfusions.find((infusion) => infusion.id === id)
-}
+// const fetchItem = (id) => {
+//   infusion.value = allInfusions.find((infusion) => infusion.id === id)
+// }
 const calculatePercentage = (currentInfusion) => {
   percentage.value = parseFloat(
     ((currentInfusion.value.remainingMl / currentInfusion.value.totalMl) * 100).toFixed(1),
