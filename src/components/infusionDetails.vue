@@ -2,13 +2,29 @@
 import { ref, watch, onMounted, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import dummy from '@/assets/generated_data_unique_with_time.json'
+import PumpStackInfusions from '@/assets/generated_data_with_pumpstacks.json'
 import { ProgressIndicator, ProgressRoot } from 'radix-vue'
 const infusion = ref(null)
 const percentage = ref(null)
 const percentageForBar = ref(null)
-const allInfusions = dummy
+const allInfusions = PumpStackInfusions
 const route = useRoute() // Get the current route to access the params
 
+
+function findInfusionById(id) {
+  for (const item of allInfusions) {
+    // Regular infusion
+    if (item.id === id) infusion.value = item;
+
+    // Pumpstack
+    if (Array.isArray(item.pumps)) {
+      const found = item.pumps.find(pump => pump.id === id);
+      if (found) infusion.value = found;
+    }
+  }
+
+  return null; // Not found
+}
 // Fetch the infusion based on the ID
 const fetchItem = (id) => {
   infusion.value = allInfusions.find((infusion) => infusion.id === id)
@@ -40,7 +56,7 @@ const backgroundClass = computed(() => {
 watch(
   () => route.params.infusionId,
   (newId) => {
-    fetchItem(newId)
+    findInfusionById(newId)
     calculatePercentage(infusion)
   },
 )
@@ -48,7 +64,7 @@ watch(
 // Initial fetch when component is mounted
 onMounted(() => {
   const id = route.params.infusionId
-  fetchItem(id)
+  findInfusionById(id)
   calculatePercentage(infusion)
 })
 </script>

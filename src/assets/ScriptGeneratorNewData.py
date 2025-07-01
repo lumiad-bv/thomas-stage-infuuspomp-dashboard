@@ -1,6 +1,7 @@
 import math
 import random
 import json
+from token import STRING
 
 # This script generates dummy data for the development of the Lumiad dashboard. it is not real data and should not be treated as such
 
@@ -224,7 +225,8 @@ def generate_data(num_entries):
     return data
 
 # Generate 500 entries
-generated_data = generate_data(800)
+amount_of_data = 50
+generated_data = generate_data(amount_of_data)
 
 # Convert to JSON format
 json_data = json.dumps(generated_data, indent=2)
@@ -233,4 +235,4 @@ json_data = json.dumps(generated_data, indent=2)
 with open("generated_data_with_pumpstacks.json", "w") as file:
     file.write(json_data)
 
-print("800 unique entries generated and saved to 'generated_data_with_pumpstacks.json'.")
+print(str(amount_of_data) +  " unique entries generated and saved to 'generated_data_with_pumpstacks.json'.")

@@ -1,6 +1,7 @@
 <script setup>
 import { RouterView } from 'vue-router'
 import AllInfusions from '@/assets/generated_data_unique_with_time.json'
+import PumpStackInfusions from '@/assets/generated_data_with_pumpstacks.json'
 import { provide, ref, watch, onMounted } from 'vue'
 import { ToggleGroupItem, ToggleGroupRoot, Toggle } from 'radix-vue'
 import InfusionButtons from '@/components/InfusionButtons.vue'
@@ -8,7 +9,7 @@ import { Icon } from '@iconify/vue'
 import { selectedButtoneStore } from '@/stores/selectedButtonStore.js'
 import { initializeImageMapPro as Initialize } from '@/functions/imageMapPro.js'
 
-let currentInfusions = AllInfusions
+let currentInfusions = PumpStackInfusions
 
 const initializeImageMapPro = () => {
   if (window.ImageMapPro) {
@@ -107,11 +108,11 @@ function filterAllInfusions(afdeling) {
     )
   ) {
     if (afdeling === 'main floor') {
-      currentInfusions = AllInfusions.filter(
+      currentInfusions = PumpStackInfusions.filter(
         (infusion) => infusion.floor === afdeling.substring(0, 4),
       )
     } else {
-      currentInfusions = AllInfusions.filter(
+      currentInfusions = PumpStackInfusions.filter(
         (infusion) => infusion.floor === afdeling.substring(0, 3),
       )
     }
@@ -120,7 +121,7 @@ function filterAllInfusions(afdeling) {
       window.ImageMapPro.changeArtboard('diakonessenhuis', afdeling)
     }
   } else {
-    currentInfusions = AllInfusions.filter((infusion) => infusion.department === afdeling)
+    currentInfusions = PumpStackInfusions.filter((infusion) => infusion.department === afdeling)
     if (window.ImageMapPro) {
       window.ImageMapPro.changeArtboard('diakonessenhuis', currentInfusions[0].floor + ' floor')
       window.ImageMapPro.highlightObject('diakonessenhuis', afdeling)
@@ -135,21 +136,21 @@ function filterAllInfusionsNoMap(afdeling) {
     )
   ) {
     if (afdeling === 'main floor') {
-      currentInfusions = AllInfusions.filter(
+      currentInfusions = PumpStackInfusions.filter(
         (infusion) => infusion.floor === afdeling.substring(0, 4),
       )
     } else {
-      currentInfusions = AllInfusions.filter(
+      currentInfusions = PumpStackInfusions.filter(
         (infusion) => infusion.floor === afdeling.substring(0, 3),
       )
     }
   } else {
-    currentInfusions = AllInfusions.filter((infusion) => infusion.department === afdeling)
+    currentInfusions = PumpStackInfusions.filter((infusion) => infusion.department === afdeling)
   }
 }
 
 function returnToAllInfusions() {
-  currentInfusions = AllInfusions
+  currentInfusions = PumpStackInfusions
 }
 watch(selectedButtoneStore.currentDepartment, (newAfdeling) => {
   console.log(newAfdeling)
@@ -423,21 +424,52 @@ const toggleGroupItemClasses =
         <div
           class="4xl:m-3 md:m-1 m-2 4xl:h-[68vh] xl:h-[60vh] md:h-[60.2vh] h-[51.3vh] xl:w-[28vw] overflow-auto"
         >
-          <div v-for="infusion in currentInfusions" :key="infusion.id + Math.random()">
+          <div v-for="item in currentInfusions" :key="item.id || item.id_stack_number" class="mb-2">
+            <!-- Regular infusion -->
             <InfusionButtons
-              :department="infusion.department"
-              :floor="infusion.floor"
-              :ward="infusion.ward"
-              :bed="infusion.bed"
-              :drug="infusion.drug"
-              :status="infusion.status"
-              :totalMl="infusion.totalMl"
-              :remainingMl="infusion.remainingMl"
-              :mlPerHour="infusion.mlPerHour"
-              :time-running="infusion.timeRunning"
-              :timeRemaining="infusion.timeRemaining"
-              :id="infusion.id"
+              v-if="!item.pumps"
+              :department="item.department"
+              :floor="item.floor"
+              :ward="item.ward"
+              :bed="item.bed"
+              :drug="item.drug"
+              :status="item.status"
+              :totalMl="item.totalMl"
+              :remainingMl="item.remainingMl"
+              :mlPerHour="item.mlPerHour"
+              :time-running="item.timeRunning"
+              :timeRemaining="item.timeRemaining"
+              :id="item.id"
+              :softwareVersion="item.softwareVersion"
+              :medicalLibraryVersion="item.medicalLibraryVersion"
             />
+
+            <!-- Stacked infusions -->
+            <div v-else class="border border-gray-500 rounded-xl bg-blue-100  shadow">
+              <div class="font-semibold mb-2 text-gray-700 text-center">
+                Stack: {{ item.id_stack_number }}
+              </div>
+              <div class=" gap-2">
+                <InfusionButtons
+                  v-for="pump in item.pumps"
+                  :key="pump.id"
+                  :department="pump.department"
+                  :floor="pump.floor"
+                  :ward="pump.ward"
+                  :bed="pump.bed"
+                  :drug="pump.drug"
+                  :status="pump.status"
+                  :totalMl="pump.totalMl"
+                  :remainingMl="pump.remainingMl"
+                  :mlPerHour="pump.mlPerHour"
+                  :time-running="pump.timeRunning"
+                  :timeRemaining="pump.timeRemaining"
+                  :id="pump.id"
+                  :softwareVersion="pump.softwareVersion"
+                  :medicalLibraryVersion="pump.medicalLibraryVersion"
+                />
+              </div>
+            </div>
           </div>
         </div>
       </div>
