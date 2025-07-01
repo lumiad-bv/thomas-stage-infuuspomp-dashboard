@@ -1,10 +1,14 @@
 # lumiad-vue-dashboard
 
-This template should help get you started developing with Vue 3 in Vite.
+This is the current setup for the dashboard for the collaboration between Lumiad and Arcomed.
 
-## Recommended IDE Setup
+It is possible that this repository will be used in the future for other devices as well.
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+
+Currently data is static but it is planned to be connected to a backend in the future. this backend is being developed in a separate repository. in the python programming language.
+## IDE Setup
+This project has been built using webstorm but can be loaded into any IDE that supports Vue.js development.
+
 
 ## Customize configuration
 
@@ -32,4 +36,10 @@ npm run build
 
 ```sh
 npm run lint
+```
+
+### Keep the code clean with [Prettier](https://prettier.io/)
+
+```sh
+npm run format
 ```
