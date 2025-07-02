@@ -274,7 +274,7 @@ function filterIt(value) {
     case value === '1hour':
       FilterLessThenHour()
       return
-    case value == 'stacks':
+    case value === 'stacks':
       FilterStacksOnly()
       return
     case value === 'reset':
