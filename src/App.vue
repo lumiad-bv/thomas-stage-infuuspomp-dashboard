@@ -33,7 +33,6 @@ function addClickFunctions() {
       // otherwise the department is set to the clicked object's payload
       if (action.type === 'objectClick' && options.includes(action.payload.object)) {
         afdeling.value = action.payload.object
-        console.log(action.payload.object)
       }
     })
     window.ImageMapPro.subscribe((action) => {
@@ -100,6 +99,7 @@ onMounted(() => {
   // Set the first default value from the list
   afdeling.value = options[0]
   selectedButtoneStore.currentDepartment = 'All departments'
+  selectedButtoneStore.currentFloor = 'overview'
 })
 const sortChoice = ref(null)
 // a save location for the previous sorting choice to permit sorting in reverse
@@ -149,22 +149,26 @@ function filterWithPumpstacks(afdeling) {
 }
 
 function filterAllInfusions(afdeling) {
-  selectedButtoneStore.currentDepartment = afdeling;
+  // selectedButtoneStore.currentDepartment = afdeling;
   currentInfusions = filterWithPumpstacks(afdeling);
 
   if (window.ImageMapPro) {
     const isFloor = ['main floor', '1st floor', '2nd floor', '3rd floor', '4th floor', '5th floor'].includes(afdeling);
-    console.log(afdeling);
+
     if (isFloor) {
       sortChoice.value = afdeling;
-      console.log(afdeling);
       window.ImageMapPro.changeArtboard('diakonessenhuis', afdeling);
     } else if (currentInfusions.length > 0) {
       const first = currentInfusions.find((inf) => !inf.pumps) || currentInfusions[0].pumps?.[0];
       const floor = first?.floor || '';
-      console.log('does it reach?', floor);
-      console.log(afdeling);
       window.ImageMapPro.changeArtboard('diakonessenhuis', floor + ' floor');
+      if (selectedButtoneStore.currentFloor === (floor + ' floor') && !['main floor', '1st floor', '2nd floor', '3rd floor', '4th floor', '5th floor'].includes(selectedButtoneStore.currentDepartment)) {
+        console.log(selectedButtoneStore.currentDepartment, 'unhighlighting');
+        window.ImageMapPro.unhighlightObject('diakonessenhuis', selectedButtoneStore.currentDepartment);
+      }
+      selectedButtoneStore.currentFloor = floor + ' floor';
+      selectedButtoneStore.currentDepartment = afdeling;
+
       window.ImageMapPro.highlightObject('diakonessenhuis', afdeling);
     }
   }
@@ -177,11 +181,11 @@ function filterAllInfusionsNoMap(afdeling) {
 function returnToAllInfusions() {
   currentInfusions = PumpStackInfusions
   selectedButtoneStore.currentDepartment = 'All departments'
+  selectedButtoneStore.currentFloor = 'overview'
 }
 
 // Watchers to handle changes in afdeling and selectedButtoneStore
 watch(selectedButtoneStore.currentDepartment, (newAfdeling) => {
-  console.log(newAfdeling)
   if (newAfdeling === 'All departments') {
     returnToAllInfusions()
     return
@@ -191,15 +195,12 @@ watch(selectedButtoneStore.currentDepartment, (newAfdeling) => {
 
 watch(afdeling, (newAfdeling) => {
   if (newAfdeling === 'All departments') {
-    console.log(newAfdeling)
     if (window.ImageMapPro) {
-      console.log('gooooooo')
       window.ImageMapPro.changeArtboard('diakonessenhuis', 'overview')
     }
     returnToAllInfusions()
     return
   }
-  selectedButtoneStore.currentDepartment = newAfdeling
   filterAllInfusions(newAfdeling)
   excecuteFilters()
 })
@@ -251,6 +252,13 @@ function FilterLessThenHour() {
   });
 }
 
+function FilterStacksOnly(){
+  currentInfusions = currentInfusions.filter((infusion) => infusion.pumps && infusion.pumps.length > 0);
+  if (currentInfusions.length === 0) {
+    console.warn('No pump stacks found.');
+  }
+}
+
 //function to execute the filters based on the toggle state
 function excecuteFilters() {
   toggleStateMultiple.value.forEach(filterIt)
@@ -265,6 +273,9 @@ function filterIt(value) {
       return
     case value === '1hour':
       FilterLessThenHour()
+      return
+    case value == 'stacks':
+      FilterStacksOnly()
       return
     case value === 'reset':
       if (afdeling.value === 'All departments') {
@@ -425,10 +436,13 @@ const toggleGroupItemClasses =
               Non-running
             </ToggleGroupItem>
             <ToggleGroupItem value="below10" :class="toggleGroupItemClasses">
-              below 10%
+              Below 10%
             </ToggleGroupItem>
             <ToggleGroupItem value="1hour" :class="toggleGroupItemClasses">
               Less then 1 hour
+            </ToggleGroupItem>
+            <ToggleGroupItem value="stacks" :class="toggleGroupItemClasses">
+              Available pumpstacks
             </ToggleGroupItem>
           </ToggleGroupRoot>
         </div>
