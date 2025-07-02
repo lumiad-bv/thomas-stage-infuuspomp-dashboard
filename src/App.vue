@@ -24,16 +24,19 @@ const Hover = defineModel('')
 function addClickFunctions() {
   if (window.ImageMapPro) {
     window.ImageMapPro.subscribe((action) => {
+      // if the click contains the default ID the department is set to 'All departments'
       if (action.type === 'artboardChange' && action.payload.artboard === 'default-id') {
         afdeling.value = 'All departments'
       }
     })
     window.ImageMapPro.subscribe((action) => {
+      // otherwise the department is set to the clicked object's payload
       if (action.type === 'objectClick' && options.includes(action.payload.object)) {
         afdeling.value = action.payload.object
       }
     })
     window.ImageMapPro.subscribe((action) => {
+      // when hovering above a room the dynamic text shows the rooms name
       if (action.type === 'objectHighlight') {
         Hover.value = action.payload.object
       }
@@ -96,10 +99,13 @@ onMounted(() => {
   // Set the first default value from the list
   afdeling.value = options[0]
   selectedButtoneStore.currentDepartment = 'All departments'
+  selectedButtoneStore.currentFloor = 'overview'
 })
 const sortChoice = ref(null)
 // a save location for the previous sorting choice to permit sorting in reverse
 
+
+// Functions to filter infusions based on afdeling (department)
 function filterWithPumpstacks(afdeling) {
   const result = [];
 
@@ -143,7 +149,7 @@ function filterWithPumpstacks(afdeling) {
 }
 
 function filterAllInfusions(afdeling) {
-  selectedButtoneStore.currentDepartment = afdeling;
+  // selectedButtoneStore.currentDepartment = afdeling;
   currentInfusions = filterWithPumpstacks(afdeling);
 
   if (window.ImageMapPro) {
@@ -156,6 +162,13 @@ function filterAllInfusions(afdeling) {
       const first = currentInfusions.find((inf) => !inf.pumps) || currentInfusions[0].pumps?.[0];
       const floor = first?.floor || '';
       window.ImageMapPro.changeArtboard('diakonessenhuis', floor + ' floor');
+      if (selectedButtoneStore.currentFloor === (floor + ' floor') && !['main floor', '1st floor', '2nd floor', '3rd floor', '4th floor', '5th floor'].includes(selectedButtoneStore.currentDepartment)) {
+        console.log(selectedButtoneStore.currentDepartment, 'unhighlighting');
+        window.ImageMapPro.unhighlightObject('diakonessenhuis', selectedButtoneStore.currentDepartment);
+      }
+      selectedButtoneStore.currentFloor = floor + ' floor';
+      selectedButtoneStore.currentDepartment = afdeling;
+
       window.ImageMapPro.highlightObject('diakonessenhuis', afdeling);
     }
   }
@@ -167,9 +180,12 @@ function filterAllInfusionsNoMap(afdeling) {
 
 function returnToAllInfusions() {
   currentInfusions = PumpStackInfusions
+  selectedButtoneStore.currentDepartment = 'All departments'
+  selectedButtoneStore.currentFloor = 'overview'
 }
+
+// Watchers to handle changes in afdeling and selectedButtoneStore
 watch(selectedButtoneStore.currentDepartment, (newAfdeling) => {
-  console.log(newAfdeling)
   if (newAfdeling === 'All departments') {
     returnToAllInfusions()
     return
@@ -185,38 +201,65 @@ watch(afdeling, (newAfdeling) => {
     returnToAllInfusions()
     return
   }
-  selectedButtoneStore.currentDepartment = newAfdeling
   filterAllInfusions(newAfdeling)
   excecuteFilters()
 })
 
+// Function to filter current infusions with stack support
+function filterCurrentInfusionsWithStackSupport(predicateFn) {
+  const result = [];
+
+  for (const item of currentInfusions) {
+    if (Array.isArray(item.pumps)) {
+      const filteredPumps = item.pumps.filter(predicateFn);
+      if (filteredPumps.length > 0) {
+        result.push({
+          id_stack_number: item.id_stack_number,
+          pumps: filteredPumps,
+        });
+      }
+    } else {
+      if (predicateFn(item)) {
+        result.push(item);
+      }
+    }
+  }
+
+  return result;
+}
+
+//filter functions of the current 3 buttons
 function FilterNonRun() {
-  currentInfusions = currentInfusions.filter(
-    (infusion) => infusion.timeRemaining === 'Infusion not running',
-  )
+  currentInfusions = filterCurrentInfusionsWithStackSupport(
+    (infusion) => infusion.timeRemaining === 'Infusion not running'
+  );
   if (currentInfusions.length === 0) {
-    console.warn('No non-running infusions found.')
-    // Optionally: show a message, reset state, or prevent further logic
+    console.warn('No non-running infusions found.');
   }
 }
 
 function FilterBelow10() {
-  currentInfusions = currentInfusions.filter(
-    (infusion) => infusion.totalMl / infusion.remainingMl > 10,
-  )
+  currentInfusions = filterCurrentInfusionsWithStackSupport(
+    (infusion) => infusion.totalMl / infusion.remainingMl > 10
+  );
 }
 
 function FilterLessThenHour() {
-  currentInfusions = currentInfusions.filter((infusion) => {
-    if (!(infusion.timeRemaining === 'Infusion not running')) {
-      var splitstring = infusion.timeRemaining.split(':')
-      if (splitstring[0] === '0') {
-        return infusion
-      }
-    }
-  })
+  currentInfusions = filterCurrentInfusionsWithStackSupport((infusion) => {
+    if (infusion.timeRemaining === 'Infusion not running') return false;
+    const [hours] = infusion.timeRemaining.split(':');
+    return Number(hours) < 1;
+  });
 }
 
+function FilterStacksOnly(){
+  currentInfusions = currentInfusions.filter((infusion) => infusion.pumps && infusion.pumps.length > 0);
+  if (currentInfusions.length === 0) {
+    console.warn('No pump stacks found.');
+  }
+}
+
+//function to execute the filters based on the toggle state
 function excecuteFilters() {
   toggleStateMultiple.value.forEach(filterIt)
 }
@@ -231,6 +274,9 @@ function filterIt(value) {
     case value === '1hour':
       FilterLessThenHour()
       return
+    case value === 'stacks':
+      FilterStacksOnly()
+      return
     case value === 'reset':
       if (afdeling.value === 'All departments') {
         returnToAllInfusions()
@@ -240,10 +286,12 @@ function filterIt(value) {
   }
 }
 
+//function to calculate the percentage of remaining IV fluid
 function calculatePercentage(infusion) {
   return parseFloat(((infusion.remainingMl / infusion.totalMl) * 100).toFixed(1))
 }
 
+//function to show remaining time of infusion
 function timeToSeconds(time) {
   // Ensure the time has a valid format like HH:SS
   const [hours, seconds] = time.split(':').map(Number)
@@ -252,82 +300,63 @@ function timeToSeconds(time) {
   return hours * 60 + seconds // Convert to total minutes (HH treated as minutes)
 }
 
+
 function sortInfusions(newSortChoice) {
-  switch (true) {
-    case newSortChoice === 'remainingMl':
-      for (let i = 0; i < currentInfusions.length; i++) {
-        for (let j = 0; j < currentInfusions.length - 1 - i; j++) {
-          const value1 = calculatePercentage(currentInfusions[j])
-          const value2 = calculatePercentage(currentInfusions[j + 1])
-          if (value1 > value2) {
-            const temp = currentInfusions[j]
-            currentInfusions[j] = currentInfusions[j + 1]
-            currentInfusions[j + 1] = temp
-          }
-        }
-      }
-      if (toggleState.value === true) {
-        reverse()
-      }
-      return
-    case newSortChoice === 'time':
-      currentInfusions.sort((a, b) => {
-        // If 'Infusion not running', treat it as the largest possible time value
-        const timeA = a.timeRemaining === 'Infusion not running' ? '9999:59' : a.timeRemaining
-        const timeB = b.timeRemaining === 'Infusion not running' ? '9999:59' : b.timeRemaining
+  function sortPumpsArray(pumps, key, customSortFn = null) {
+    return pumps.slice().sort((a, b) => {
+      if (customSortFn) return customSortFn(a, b)
+      return a[key] > b[key] ? 1 : -1
+    })
+  }
 
-        // Normalize the time (pad single-digit hours) before calculating the seconds
-        const normalizedTimeA = timeA.length < 5 ? `0${timeA}` : timeA
-        const normalizedTimeB = timeB.length < 5 ? `0${timeB}` : timeB
+  function calculateTimeValue(infusion) {
+    const time = infusion.timeRemaining === 'Infusion not running' ? '9999:59' : infusion.timeRemaining
+    const normalized = time.length < 5 ? `0${time}` : time
+    return timeToSeconds(normalized)
+  }
 
-        // Compare by total seconds (timeToSeconds) but treat 'Infusion not running' as the last
-        return timeToSeconds(normalizedTimeA) - timeToSeconds(normalizedTimeB)
-      })
-      if (toggleState.value === true) {
-        reverse()
-      }
-      return
-    case newSortChoice === 'department': {
-      currentInfusions = currentInfusions.reduce((acc, curr) => {
-        let ind = acc.findIndex((item) => item.department > curr.department)
-        if (ind === -1) ind = acc.length
-        acc.splice(ind, 0, curr)
-        currentInfusions = acc
-        return acc
-      }, [])
-      if (toggleState.value === true) {
-        reverse()
-      }
-      return
-    }
-    case newSortChoice === 'bed': {
-      currentInfusions = currentInfusions.reduce((acc, curr) => {
-        let ind = acc.findIndex((item) => item.bed > curr.bed)
-        if (ind === -1) ind = acc.length
-        acc.splice(ind, 0, curr)
-        currentInfusions = acc
-        return acc
-      }, [])
-      if (toggleState.value === true) {
-        reverse()
-      }
-      return
-    }
-    case newSortChoice === 'drug':
-      for (let i = 0; i < currentInfusions.length; i++) {
-        for (let j = 0; j < currentInfusions.length - 1 - i; j++) {
-          const value1 = Object.values(currentInfusions[j])[3]
-          const value2 = Object.values(currentInfusions[j + 1])[3]
-          if (value1 > value2) {
-            const temp = currentInfusions[j]
-            currentInfusions[j] = currentInfusions[j + 1]
-            currentInfusions[j + 1] = temp
-          }
+  function sortInfusionsBy(key, compareFn = null) {
+    currentInfusions = currentInfusions.map((item) => {
+      if (item.pumps) {
+        return {
+          ...item,
+          pumps: sortPumpsArray(item.pumps, key, compareFn),
         }
+      } else {
+        return item
       }
-      if (toggleState.value === true) {
-        reverse()
-      }
+    })
+
+    const regulars = currentInfusions.filter((i) => !i.pumps)
+    const stacks = currentInfusions.filter((i) => i.pumps)
+
+    const sortedRegulars = compareFn
+      ? regulars.slice().sort(compareFn)
+      : regulars.slice().sort((a, b) => (a[key] > b[key] ? 1 : -1))
+
+    currentInfusions = [...sortedRegulars, ...stacks]
+    if (toggleState.value === true) reverse()
+  }
+
+  switch (newSortChoice) {
+    case 'remainingMl':
+      sortInfusionsBy(null, (a, b) => calculatePercentage(a) - calculatePercentage(b))
+      return
+
+    case 'time':
+      sortInfusionsBy(null, (a, b) => calculateTimeValue(a) - calculateTimeValue(b))
+      return
+
+    case 'department':
+      sortInfusionsBy('department')
+      return
+
+    case 'bed':
+      sortInfusionsBy('bed')
+      return
+
+    case 'drug':
+      sortInfusionsBy('drug')
       return
   }
 }
@@ -353,8 +382,6 @@ function reverse() {
 const toggleGroupItemClasses =
   'hover:bg-gray-100  data-[state=on]:bg-blue-500 data-[state=on]:text-white  flex h-[35px] xl:w-[20vw] md:w-[35vw] w-[30vw] items-center justify-center bg-white text-base leading-4 first:rounded-l last:rounded-r focus:z-10 focus:shadow-[0_0_0_2px] focus:shadow-black focus:outline-none dark:bg-gray-300  dark:border-gray-600 dark:hover:bg-gray-400 dark:data-[state=on]:bg-gray-400 '
 
-// let div = document.querySelector(".imp-ui-layers-menu-wrap");
-// div.classList.add('hidden');
 </script>
 
 <template>
@@ -409,10 +436,13 @@ const toggleGroupItemClasses =
               Non-running
             </ToggleGroupItem>
             <ToggleGroupItem value="below10" :class="toggleGroupItemClasses">
-              below 10%
+              Below 10%
             </ToggleGroupItem>
             <ToggleGroupItem value="1hour" :class="toggleGroupItemClasses">
               Less then 1 hour
+            </ToggleGroupItem>
+            <ToggleGroupItem value="stacks" :class="toggleGroupItemClasses">
+              Available pumpstacks
             </ToggleGroupItem>
           </ToggleGroupRoot>
         </div>
