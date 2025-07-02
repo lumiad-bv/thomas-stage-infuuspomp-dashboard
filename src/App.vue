@@ -413,116 +413,109 @@ const toggleGroupItemClasses =
     </header>
     <section class="md:flex 4xl:h-[78.9vh] md:h-[75vh] overflow-hidden dark:bg-black">
       <div
-        class="md:m-3 xl:h-[77vh] md:w-[65vw] xl:w-[70vw] relative md:rounded-[1vw] bg-gray-200 dark:bg-gray-500 p-2"
+        class="md:m-3 xl:h-[77vh] md:w-[50vw] xl:w-[50vw] relative md:rounded-[1vw] bg-yellow-200 dark:bg-gray-500 p-2"
       >
-        <div
-          class="4xl:w-[40.5vw] xl:w-[51vw] outline-8 rounded-xl outline-gray-500 relative 4xl:left-1/5 4xl:top-2 xl:left-36"
-        >
-          <div id="image-map-pro"></div>
-        </div>
-        <div
-          v-if="Hover"
-          class="absolute bg-blue-500 text-white rounded-full m-1 p-1 xl:bottom-8 md:bottom-0"
-        >
-          {{ Hover }}
-        </div>
-      </div>
-      <div
-        class="xl:w-[30vw] md:w-[35vw] 4xl:h-[77vh] xl:h-[75vh] m-3 flex-initial bg-gray-200 dark:bg-gray-500 md:rounded-[1vw] rounded-[3vw] p-2 overflow-x-hidden"
-      >
-        <div>
-          <ToggleGroupRoot v-model="toggleStateMultiple" type="multiple" class="flex">
-            <ToggleGroupItem value="nonRun" :class="toggleGroupItemClasses">
-              Non-running
-            </ToggleGroupItem>
-            <ToggleGroupItem value="below10" :class="toggleGroupItemClasses">
-              Below 10%
-            </ToggleGroupItem>
-            <ToggleGroupItem value="1hour" :class="toggleGroupItemClasses">
-              Less then 1 hour
-            </ToggleGroupItem>
-            <ToggleGroupItem value="stacks" :class="toggleGroupItemClasses">
-              Available pumpstacks
-            </ToggleGroupItem>
-          </ToggleGroupRoot>
-        </div>
-        <div class="grid grid-cols-8">
-          <select
-            v-model="sortChoice"
-            class="w-[78vw] col-span-7 xl:w-full bg-gray-50 border border-gray-300 hover:bg-gray-100 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-300 dark:border-gray-600 dark:hover:bg-gray-400 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
-          >
-            <option selected disabled>Sort by</option>
-            <option value="remainingMl">remaining %IV</option>
-            <option value="time">Remaining time</option>
-            <option value="department">Department</option>
-            <option value="bed">bed</option>
-            <option value="drug">Drug</option>
-          </select>
-          <Toggle
-            v-model:pressed="toggleState"
-            aria-label="Toggle italic"
-            class="hover:bg-gray-100 text-black data-[state=on]:bg-blue-500 data-[state=on]:text-white flex items-center justify-center rounded bg-gray-50 border border-gray-300"
-          >
-            <Icon icon="radix-icons:caret-sort" class="color-black" />
-          </Toggle>
-        </div>
 
-        <div
-          class="4xl:m-3 md:m-1 m-2 4xl:h-[68vh] xl:h-[60vh] md:h-[60.2vh] h-[51.3vh] xl:w-[28vw] overflow-auto"
-        >
-          <div v-for="item in currentInfusions" :key="item.id || item.id_stack_number" class="mb-2">
-            <!-- Regular infusion -->
-            <InfusionButtons
-              v-if="!item.pumps"
-              :department="item.department"
-              :floor="item.floor"
-              :ward="item.ward"
-              :bed="item.bed"
-              :drug="item.drug"
-              :status="item.status"
-              :totalMl="item.totalMl"
-              :remainingMl="item.remainingMl"
-              :mlPerHour="item.mlPerHour"
-              :time-running="item.timeRunning"
-              :timeRemaining="item.timeRemaining"
-              :id="item.id"
-              :softwareVersion="item.softwareVersion"
-              :medicalLibraryVersion="item.medicalLibraryVersion"
-            />
+          <div
+            class="xl:w-[50vw] md:w-[45vw] 4xl:h-[77vh] xl:h-[75vh] m-3 flex-initial bg-green-200 dark:bg-gray-500 md:rounded-[1vw] rounded-[3vw] p-2 overflow-x-hidden"
+          >
+            <div>
+              <ToggleGroupRoot v-model="toggleStateMultiple" type="multiple" class="flex">
+                <ToggleGroupItem value="nonRun" :class="toggleGroupItemClasses">
+                  Non-running
+                </ToggleGroupItem>
+                <ToggleGroupItem value="below10" :class="toggleGroupItemClasses">
+                  Below 10%
+                </ToggleGroupItem>
+                <ToggleGroupItem value="1hour" :class="toggleGroupItemClasses">
+                  Less then 1 hour
+                </ToggleGroupItem>
+                <ToggleGroupItem value="stacks" :class="toggleGroupItemClasses">
+                  Available pumpstacks
+                </ToggleGroupItem>
+              </ToggleGroupRoot>
+            </div>
+            <div class="grid grid-cols-8">
+              <select
+                v-model="sortChoice"
+                class="w-[78vw] col-span-7 xl:w-full bg-gray-50 border border-gray-300 hover:bg-gray-100 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-300 dark:border-gray-600 dark:hover:bg-gray-400 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              >
+                <option selected disabled>Sort by</option>
+                <option value="remainingMl">remaining %IV</option>
+                <option value="time">Remaining time</option>
+                <option value="department">Department</option>
+                <option value="bed">bed</option>
+                <option value="drug">Drug</option>
+              </select>
+              <Toggle
+                v-model:pressed="toggleState"
+                aria-label="Toggle italic"
+                class="hover:bg-gray-100 text-black data-[state=on]:bg-blue-500 data-[state=on]:text-white flex items-center justify-center rounded bg-gray-50 border border-gray-300"
+              >
+                <Icon icon="radix-icons:caret-sort" class="color-black" />
+              </Toggle>
+            </div>
 
-            <!-- Stacked infusions -->
-            <div v-else class="border border-gray-500 rounded-xl bg-white  shadow">
-              <div class="font-semibold mb-2 text-gray-700 text-center">
-                Stack: {{ item.id_stack_number }}
-              </div>
-              <div class=" gap-2">
+            <div
+              class="4xl:m-3 md:m-1 m-2 4xl:h-[68vh] xl:h-[60vh] md:h-[60.2vh] h-[51.3vh]  overflow-auto"
+            >
+              <div v-for="item in currentInfusions" :key="item.id || item.id_stack_number" class="mb-2">
+                <!-- Regular infusion -->
                 <InfusionButtons
-                  v-for="pump in item.pumps"
-                  :key="pump.id"
-                  :department="pump.department"
-                  :floor="pump.floor"
-                  :ward="pump.ward"
-                  :bed="pump.bed"
-                  :drug="pump.drug"
-                  :status="pump.status"
-                  :totalMl="pump.totalMl"
-                  :remainingMl="pump.remainingMl"
-                  :mlPerHour="pump.mlPerHour"
-                  :time-running="pump.timeRunning"
-                  :timeRemaining="pump.timeRemaining"
-                  :id="pump.id"
-                  :softwareVersion="pump.softwareVersion"
-                  :medicalLibraryVersion="pump.medicalLibraryVersion"
+                  v-if="!item.pumps"
+                  :department="item.department"
+                  :floor="item.floor"
+                  :ward="item.ward"
+                  :bed="item.bed"
+                  :drug="item.drug"
+                  :status="item.status"
+                  :totalMl="item.totalMl"
+                  :remainingMl="item.remainingMl"
+                  :mlPerHour="item.mlPerHour"
+                  :time-running="item.timeRunning"
+                  :timeRemaining="item.timeRemaining"
+                  :id="item.id"
+                  :softwareVersion="item.softwareVersion"
+                  :medicalLibraryVersion="item.medicalLibraryVersion"
                 />
+
+                <!-- Stacked infusions -->
+                <div v-else class="border border-gray-500 rounded-xl bg-white  shadow">
+                  <div class="font-semibold mb-2 text-gray-700 text-center">
+                    Stack: {{ item.id_stack_number }}
+                  </div>
+                  <div class=" gap-2">
+                    <InfusionButtons
+                      v-for="pump in item.pumps"
+                      :key="pump.id"
+                      :department="pump.department"
+                      :floor="pump.floor"
+                      :ward="pump.ward"
+                      :bed="pump.bed"
+                      :drug="pump.drug"
+                      :status="pump.status"
+                      :totalMl="pump.totalMl"
+                      :remainingMl="pump.remainingMl"
+                      :mlPerHour="pump.mlPerHour"
+                      :time-running="pump.timeRunning"
+                      :timeRemaining="pump.timeRemaining"
+                      :id="pump.id"
+                      :softwareVersion="pump.softwareVersion"
+                      :medicalLibraryVersion="pump.medicalLibraryVersion"
+                    />
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
+
         </div>
+
       </div>
+
     </section>
     <section class="xl:flex overflow-hidden dark:bg-black">
       <div
-        class="xl:m-3 4xl:h-[11.25vh] xl:static xl:h-[14.5vh] 4XL:w-[100vw] xl:w-[100vw] flex-initial md:rounded-[1vw] rounded-[3vw] bg-gray-200 dark:bg-gray-500"
+        class="xl:m-3 4xl:h-[11.25vh] xl:static xl:h-[14.5vh] 4XL:w-[100vw] xl:w-[100vw] flex-initial md:rounded-[1vw] rounded-[3vw] bg-vlue-200 dark:bg-gray-500"
       >
         <div
           id="infuusDetails"
