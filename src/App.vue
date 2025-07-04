@@ -9,6 +9,25 @@ import { Icon } from '@iconify/vue'
 import { selectedButtoneStore } from '@/stores/selectedButtonStore.js'
 import StackButtons from '@/components/StackButtons.vue'
 
+// a test to see if pdfmake works in this application
+import pdfMake from 'pdfmake/build/pdfmake'
+import * as pdfFonts from 'pdfmake/build/vfs_fonts'
+
+// ✅ Correct way to access vfs
+pdfMake.vfs = pdfFonts.default.vfs
+
+function downloadPdf() {
+  const docDefinition = {
+    content: [
+      { text: 'Hello PDFMake in Vue!', fontSize: 18 },
+      { text: 'It works now ✅' }
+    ]
+  }
+
+  pdfMake.createPdf(docDefinition).download('example.pdf')
+}
+
+
 const currentInfusions = ref([]) // ✅ ref makes it reactive
 
 const amountOfInfusions = computed(() =>
@@ -345,7 +364,7 @@ function reverse() {
   updateInfusions(currentInfusions.value.reverse())
 }
 const toggleGroupItemClasses =
-  'hover:bg-gray-100  data-[state=on]:bg-blue-500 data-[state=on]:text-white  flex h-[35px] xl:w-[20vw] md:w-[35vw] w-[30vw] items-center justify-center bg-white text-base leading-4 first:rounded-l last:rounded-r focus:z-10 focus:shadow-[0_0_0_2px] focus:shadow-black focus:outline-none dark:bg-gray-300  dark:border-gray-600 dark:hover:bg-gray-400 dark:data-[state=on]:bg-gray-400 '
+  'hover:bg-gray-200  data-[state=on]:bg-blue-500 data-[state=on]:text-white  flex h-[35px] xl:w-[20vw] md:w-[35vw] w-[30vw] items-center justify-center bg-white text-base leading-4 first:rounded-l last:rounded-r focus:z-10 focus:shadow-[0_0_0_2px] focus:shadow-black focus:outline-none dark:bg-gray-300  dark:border-gray-600 dark:hover:bg-gray-400 dark:data-[state=on]:bg-gray-400 '
 
 
 </script>
@@ -401,7 +420,7 @@ const toggleGroupItemClasses =
         <div class="grid grid-cols-8">
           <select
             v-model="sortChoice"
-            class="w-[78vw] col-span-7 xl:w-full bg-gray-50 border border-gray-300 hover:bg-gray-100 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-300 dark:border-gray-600 dark:hover:bg-gray-400 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            class="hover:bg-gray-200 w-[78vw] col-span-7 xl:w-full bg-gray-50 border border-gray-300 hover:bg-gray-100 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-300 dark:border-gray-600 dark:hover:bg-gray-400 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
           >
             <option selected disabled>Sort by</option>
             <option value="remainingMl">remaining %IV</option>
@@ -413,7 +432,7 @@ const toggleGroupItemClasses =
           <Toggle
             v-model:pressed="toggleState"
             aria-label="Toggle italic"
-            class="hover:bg-gray-100 text-black data-[state=on]:bg-blue-500 data-[state=on]:text-white flex items-center justify-center rounded bg-gray-50 border border-gray-300"
+            class="hover:bg-gray-200 text-black data-[state=on]:bg-blue-500 data-[state=on]:text-white flex items-center justify-center rounded bg-gray-50 border border-gray-300"
           >
             <Icon icon="radix-icons:caret-sort" class="color-black" />
           </Toggle>
@@ -461,11 +480,13 @@ const toggleGroupItemClasses =
       >
         <div
           id="infuusDetails"
-          class="bg-gray-200 xl:static flex-initial overflow-hidden rounded-[1vw] p-5 font-[Open_Sans] text-2xl text-ellipsis [&::-webkit-scrollbar]:[width:10px] [&::-webkit-scrollbar]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-400"
+          class="bg-gray-200 xl:static h-[65vh] flex-initial overflow-hidden rounded-[1vw] p-5 font-[Open_Sans] text-2xl text-ellipsis [&::-webkit-scrollbar]:[width:10px] [&::-webkit-scrollbar]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-400"
         >
           <RouterView />
         </div>
-        <div class="bg-gray-200 static flex-initial p-5 mt-2 h-[24vh] rounded-[1vw]"></div>
+        <div class="bg-gray-200 static flex-initial p-5 mt-2 h-[24vh] rounded-[1vw]">
+          <button class=" flex justify-center items-center bg-blue-400 cursor-pointer hover:bg-blue-500 hover:text-white rounded-2xl w-44 h-44" @click="downloadPdf">Download PDF</button>
+        </div>
       </div>
     </section>
   </body>
