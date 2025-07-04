@@ -241,6 +241,15 @@ function FilterStacksOnly() {
   }
 }
 
+function FilterNoStacks() {
+  updateInfusions(
+    currentInfusions.value.filter((infusion) => !infusion.pumps),
+  )
+  if (currentInfusions.value.length === 0) {
+    console.warn('No pump stacks found.')
+  }
+}
+
 //function to execute the filters based on the toggle state
 function excecuteFilters() {
   toggleStateMultiple.value.forEach(filterIt)
@@ -258,6 +267,9 @@ function filterIt(value) {
       return
     case value === 'stacks':
       FilterStacksOnly()
+      return
+    case value === 'nostacks':
+      FilterNoStacks()
       return
     case value === 'reset':
       if (afdeling.value === 'All departments') {
@@ -413,7 +425,10 @@ const toggleGroupItemClasses =
               Less then 1 hour
             </ToggleGroupItem>
             <ToggleGroupItem value="stacks" :class="toggleGroupItemClasses">
-              Available pumpstacks
+              Pumpstacks only
+            </ToggleGroupItem>
+            <ToggleGroupItem value="nostacks" :class="toggleGroupItemClasses">
+              No pumpstacks
             </ToggleGroupItem>
           </ToggleGroupRoot>
         </div>
@@ -439,7 +454,7 @@ const toggleGroupItemClasses =
         </div>
 
         <div
-          class="4xl:m-3 md:m-1 m-2 4xl:h-[80vh] xl:h-[70vh] md:h-[70.2vh] h-[71.3vh] overflow-auto border-2 border-solid"
+          class="4xl:m-3 md:m-1 m-2 4xl:h-[80vh] xl:h-[70vh] md:h-[70.2vh] h-[71.3vh] overflow-auto "
         >
           <div v-for="item in currentInfusions" :key="item.id || item.id_stack_number" class="mb-2">
             <!-- Regular infusion -->
