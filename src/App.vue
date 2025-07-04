@@ -350,6 +350,12 @@ function routeIt(stackId) {
   selectedButtoneStore.pressedButtonId = stackId
   route.push({ name: 'stack-details', params: { stackId: stackId } })
 }
+// const backgroundColour = computed(() => {
+//   if item.id_stack_number === selectedButtoneStore.pressedButtonId) {
+//     return 'bg-blue-500 text-white'
+//   }
+//   return "border border-gray-500 rounded-xl bg-white shadow hover:bg-blue-500 hover:text-white cursor-pointer data-[state=on]:bg-gray-700"
+// })
 </script>
 
 <template>
@@ -444,8 +450,8 @@ function routeIt(stackId) {
             />
 
             <!-- Stacked infusions -->
-            <div v-else class="border border-gray-500 rounded-xl bg-white shadow">
-              <div class="font-semibold mb-2 text-gray-700 text-center cursor-pointer" @click="routeIt(item.id_stack_number )">
+            <div v-else class="border border-gray-500 rounded-xl bg-white shadow hover:bg-blue-500 hover:text-white cursor-pointer data-[state=on]:bg-gray-700" @click="routeIt(item.id_stack_number )">
+              <div class="font-semibold mb-2  text-center  ">
                 Stack: {{ item.id_stack_number }}
               </div>
               <div class="gap-2">
