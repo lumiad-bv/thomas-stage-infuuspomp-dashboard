@@ -8,6 +8,7 @@ import InfusionButtons from '@/components/InfusionButtons.vue'
 import { Icon } from '@iconify/vue'
 import { selectedButtoneStore } from '@/stores/selectedButtonStore.js'
 import { useRouter } from 'vue-router'
+import StackButtons from '@/components/StackButtons.vue'
 
 const currentInfusions = ref([]) // ✅ ref makes it reactive
 
@@ -18,21 +19,17 @@ const amountOfInfusions = computed(() =>
     } else {
       return total + 1
     }
-  }, 0)
+  }, 0),
 )
 
 const amountOfInfusionsWithStacks = computed(() => {
-  return currentInfusions.value.filter((infusion) => infusion.pumps && infusion.pumps.length > 0).length
+  return currentInfusions.value.filter((infusion) => infusion.pumps && infusion.pumps.length > 0)
+    .length
 })
 function updateInfusions(newInfusions) {
   currentInfusions.value = newInfusions // ✅ assign to .value!
 }
 updateInfusions(PumpStackInfusions)
-
-
-
-
-
 
 const options = [
   'All departments',
@@ -133,7 +130,6 @@ function filterWithPumpstacks(afdeling) {
   return result
 }
 
-
 function filterAllInfusionsNoMap(afdeling) {
   selectedButtoneStore.currentDepartment = afdeling
   updateInfusions(filterWithPumpstacks(afdeling))
@@ -189,9 +185,11 @@ function filterCurrentInfusionsWithStackSupport(predicateFn) {
 
 //filter functions of the current 3 buttons
 function FilterNonRun() {
-  updateInfusions(filterCurrentInfusionsWithStackSupport(
-    (infusion) => infusion.timeRemaining === 'Infusion not running',
-  ))
+  updateInfusions(
+    filterCurrentInfusionsWithStackSupport(
+      (infusion) => infusion.timeRemaining === 'Infusion not running',
+    ),
+  )
 
   if (currentInfusions.value.length === 0) {
     console.warn('No non-running infusions found.')
@@ -199,23 +197,27 @@ function FilterNonRun() {
 }
 
 function FilterBelow10() {
-  updateInfusions(filterCurrentInfusionsWithStackSupport(
-    (infusion) => infusion.totalMl / infusion.remainingMl > 10,
-  ))
+  updateInfusions(
+    filterCurrentInfusionsWithStackSupport(
+      (infusion) => infusion.totalMl / infusion.remainingMl > 10,
+    ),
+  )
 }
 
 function FilterLessThenHour() {
-  updateInfusions(filterCurrentInfusionsWithStackSupport((infusion) => {
-    if (infusion.timeRemaining === 'Infusion not running') return false
-    const [hours] = infusion.timeRemaining.split(':')
-    return Number(hours) < 1
-  }))
+  updateInfusions(
+    filterCurrentInfusionsWithStackSupport((infusion) => {
+      if (infusion.timeRemaining === 'Infusion not running') return false
+      const [hours] = infusion.timeRemaining.split(':')
+      return Number(hours) < 1
+    }),
+  )
 }
 
 function FilterStacksOnly() {
-  updateInfusions(currentInfusions.value.filter(
-    (infusion) => infusion.pumps && infusion.pumps.length > 0,
-  ))
+  updateInfusions(
+    currentInfusions.value.filter((infusion) => infusion.pumps && infusion.pumps.length > 0),
+  )
   if (currentInfusions.value.length === 0) {
     console.warn('No pump stacks found.')
   }
@@ -278,17 +280,18 @@ function sortInfusions(newSortChoice) {
   }
 
   function sortInfusionsBy(key, compareFn = null) {
-    updateInfusions(currentInfusions.value.map((item) => {
-      if (item.pumps) {
-        return {
-          ...item,
-          pumps: sortPumpsArray(item.pumps, key, compareFn),
+    updateInfusions(
+      currentInfusions.value.map((item) => {
+        if (item.pumps) {
+          return {
+            ...item,
+            pumps: sortPumpsArray(item.pumps, key, compareFn),
+          }
+        } else {
+          return item
         }
-      } else {
-        return item
-      }
-    }))
-
+      }),
+    )
 
     const regulars = currentInfusions.value.filter((i) => !i.pumps)
     const stacks = currentInfusions.value.filter((i) => i.pumps)
@@ -369,7 +372,8 @@ function routeIt(stackId) {
       <h1
         class="text-white font-script font-bold text-bold text-4xl left-[46vw] md:top-4 absolute md:mr-[28vw] mr-[4vw] md:visible invisible h-[3vw]"
       >
-        {{ afdeling }} , {{(amountOfInfusions)}} infusions, {{amountOfInfusionsWithStacks}} Pumpstacks
+        {{ afdeling }} , {{ amountOfInfusions }} infusions,
+        {{ amountOfInfusionsWithStacks }} Pumpstacks
       </h1>
       <select
         v-model="afdeling"
@@ -438,7 +442,6 @@ function routeIt(stackId) {
               :ward="item.ward"
               :bed="item.bed"
               :drug="item.drug"
-              :status="item.status"
               :totalMl="item.totalMl"
               :remainingMl="item.remainingMl"
               :mlPerHour="item.mlPerHour"
@@ -450,32 +453,17 @@ function routeIt(stackId) {
             />
 
             <!-- Stacked infusions -->
-            <div v-else class="border border-gray-500 rounded-xl bg-white shadow hover:bg-blue-500 hover:text-white cursor-pointer data-[state=on]:bg-gray-700" @click="routeIt(item.id_stack_number )">
-              <div class="font-semibold mb-2  text-center  ">
-                Stack: {{ item.id_stack_number }}
-              </div>
-              <div class="gap-2">
-                <InfusionButtons
-                  v-for="pump in item.pumps"
-                  :key="pump.id"
-                  :department="pump.department"
-                  :floor="pump.floor"
-                  :ward="pump.ward"
-                  :bed="pump.bed"
-                  :drug="pump.drug"
-                  :status="pump.status"
-                  :totalMl="pump.totalMl"
-                  :remainingMl="pump.remainingMl"
-                  :mlPerHour="pump.mlPerHour"
-                  :time-running="pump.timeRunning"
-                  :timeRemaining="pump.timeRemaining"
-                  :id="pump.id"
-                  :softwareVersion="pump.softwareVersion"
-                  :medicalLibraryVersion="pump.medicalLibraryVersion"
-                />
-              </div>
+
+              <StackButtons
+                v-else
+              :id_stack_number="item.id_stack_number"
+              :medical-library-version="item.medicalLibraryVersion"
+              :software-version="item.softwareVersion"
+              :pumps="item.pumps"
+              />
+
             </div>
-          </div>
+
         </div>
       </div>
 

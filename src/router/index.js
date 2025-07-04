@@ -14,7 +14,7 @@ const router = createRouter({
       path: '/stacks/:stackId',
       name: 'stack-details',
       component: StackDetails,
-    }
+    },
   ],
 })
 

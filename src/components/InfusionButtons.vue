@@ -23,7 +23,7 @@ const route = useRouter()
 function routeIt(infusionID) {
   selectedButtoneStore.pressedButtonId = infusionID
   route.push({ name: 'Infusion-details', params: { infusionId: infusionID } })
-}
+  }
 
 const backgroundClass = computed(() => {
   switch (true) {
@@ -61,7 +61,7 @@ const notifier = computed(() => {
 
 <template>
   <div>
-    <button @click="routeIt(props.id)" :class="notifier">
+    <button @click.stop="routeIt(props.id)" :class="notifier">
       <div :class="backgroundClass" id="{{props.id}}">{{ remainingPercentage }}%</div>
       <div class="w-[25vw] truncate text-ellipsis">
         {{ props.timeRemaining }}

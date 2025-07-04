@@ -16,8 +16,6 @@ function findStackById(id) {
   return null // Not found
 }
 
-
-
 // Watch for changes in the route's infusionId parameter
 watch(
   () => route.params.stackId,
@@ -48,7 +46,6 @@ onMounted(() => {
         <div class="bg-blue-500 text-white rounded-full m-1 p-1">medicalLibraryVersion</div>
         <div class="bg-gray-300 rounded-full m-1 p-1">{{ pumpStack.medicalLibraryVersion }}</div>
       </div>
-
     </div>
   </div>
 </template>
