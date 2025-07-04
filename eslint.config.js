@@ -1,7 +1,6 @@
 import js from '@eslint/js'
 import pluginVue from 'eslint-plugin-vue'
 import pluginTypeScript from '@typescript-eslint/eslint-plugin'
-import parserTypeScript from '@typescript-eslint/parser'
 import skipFormatting from '@vue/eslint-config-prettier/skip-formatting'
 
 export default [
