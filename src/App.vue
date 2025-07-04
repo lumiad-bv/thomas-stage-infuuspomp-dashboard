@@ -7,7 +7,6 @@ import { ToggleGroupItem, ToggleGroupRoot, Toggle } from 'radix-vue'
 import InfusionButtons from '@/components/InfusionButtons.vue'
 import { Icon } from '@iconify/vue'
 import { selectedButtoneStore } from '@/stores/selectedButtonStore.js'
-import { useRouter } from 'vue-router'
 import StackButtons from '@/components/StackButtons.vue'
 
 const currentInfusions = ref([]) // ✅ ref makes it reactive
