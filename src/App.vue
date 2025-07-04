@@ -2,57 +2,36 @@
 import { RouterView } from 'vue-router'
 // import AllInfusions from '@/assets/generated_data_unique_with_time.json'
 import PumpStackInfusions from '@/assets/generated_data_with_pumpstacks.json'
-import { provide, ref, watch, onMounted } from 'vue'
+import { provide, ref, watch, computed, onMounted } from 'vue'
 import { ToggleGroupItem, ToggleGroupRoot, Toggle } from 'radix-vue'
 import InfusionButtons from '@/components/InfusionButtons.vue'
 import { Icon } from '@iconify/vue'
 import { selectedButtoneStore } from '@/stores/selectedButtonStore.js'
-import { initializeImageMapPro as Initialize } from '@/functions/imageMapPro.js'
 
-let currentInfusions = PumpStackInfusions
+const currentInfusions = ref([]) // ✅ ref makes it reactive
 
-const initializeImageMapPro = () => {
-  if (window.ImageMapPro) {
-    Initialize()
-    addClickFunctions()
-  } else {
-    console.error('Image Map Pro script not loaded.')
-  }
-}
+const amountOfInfusions = computed(() =>
+  currentInfusions.value.reduce((total, item) => {
+    if (Array.isArray(item.pumps)) {
+      return total + item.pumps.length
+    } else {
+      return total + 1
+    }
+  }, 0)
+)
 
-const Hover = defineModel('')
-function addClickFunctions() {
-  if (window.ImageMapPro) {
-    window.ImageMapPro.subscribe((action) => {
-      // if the click contains the default ID the department is set to 'All departments'
-      if (action.type === 'artboardChange' && action.payload.artboard === 'default-id') {
-        afdeling.value = 'All departments'
-      }
-    })
-    window.ImageMapPro.subscribe((action) => {
-      // otherwise the department is set to the clicked object's payload
-      if (action.type === 'objectClick' && options.includes(action.payload.object)) {
-        afdeling.value = action.payload.object
-      }
-    })
-    window.ImageMapPro.subscribe((action) => {
-      // when hovering above a room the dynamic text shows the rooms name
-      if (action.type === 'objectHighlight') {
-        Hover.value = action.payload.object
-      }
-    })
-  }
-}
-
-onMounted(() => {
-  // Check if Image Map Pro is available
-  if (window.ImageMapPro) {
-    initializeImageMapPro() // Initialize directly if script is already loaded
-  } else {
-    // If the script isn't loaded yet, listen for the `window.onload` event
-    window.onload = initializeImageMapPro
-  }
+const amountOfInfusionsWithStacks = computed(() => {
+  return currentInfusions.value.filter((infusion) => infusion.pumps && infusion.pumps.length > 0).length
 })
+function updateInfusions(newInfusions) {
+  currentInfusions.value = newInfusions // ✅ assign to .value!
+}
+updateInfusions(PumpStackInfusions)
+
+
+
+
+
 
 const options = [
   'All departments',
@@ -153,53 +132,14 @@ function filterWithPumpstacks(afdeling) {
   return result
 }
 
-function filterAllInfusions(afdeling) {
-  // selectedButtoneStore.currentDepartment = afdeling;
-  currentInfusions = filterWithPumpstacks(afdeling)
 
-  if (window.ImageMapPro) {
-    const isFloor = [
-      'main floor',
-      '1st floor',
-      '2nd floor',
-      '3rd floor',
-      '4th floor',
-      '5th floor',
-    ].includes(afdeling)
-
-    if (isFloor) {
-      sortChoice.value = afdeling
-      window.ImageMapPro.changeArtboard('diakonessenhuis', afdeling)
-    } else if (currentInfusions.length > 0) {
-      const first = currentInfusions.find((inf) => !inf.pumps) || currentInfusions[0].pumps?.[0]
-      const floor = first?.floor || ''
-      window.ImageMapPro.changeArtboard('diakonessenhuis', floor + ' floor')
-      if (
-        selectedButtoneStore.currentFloor === floor + ' floor' &&
-        !['main floor', '1st floor', '2nd floor', '3rd floor', '4th floor', '5th floor'].includes(
-          selectedButtoneStore.currentDepartment,
-        )
-      ) {
-        console.log(selectedButtoneStore.currentDepartment, 'unhighlighting')
-        window.ImageMapPro.unhighlightObject(
-          'diakonessenhuis',
-          selectedButtoneStore.currentDepartment,
-        )
-      }
-      selectedButtoneStore.currentFloor = floor + ' floor'
-      selectedButtoneStore.currentDepartment = afdeling
-
-      window.ImageMapPro.highlightObject('diakonessenhuis', afdeling)
-    }
-  }
-}
 function filterAllInfusionsNoMap(afdeling) {
   selectedButtoneStore.currentDepartment = afdeling
-  currentInfusions = filterWithPumpstacks(afdeling)
+  updateInfusions(filterWithPumpstacks(afdeling))
 }
 
 function returnToAllInfusions() {
-  currentInfusions = PumpStackInfusions
+  updateInfusions(PumpStackInfusions)
   selectedButtoneStore.currentDepartment = 'All departments'
   selectedButtoneStore.currentFloor = 'overview'
 }
@@ -210,18 +150,16 @@ watch(selectedButtoneStore.currentDepartment, (newAfdeling) => {
     returnToAllInfusions()
     return
   }
-  filterAllInfusions(newAfdeling)
+  filterAllInfusionsNoMap(newAfdeling)
 })
 
 watch(afdeling, (newAfdeling) => {
   if (newAfdeling === 'All departments') {
-    if (window.ImageMapPro) {
-      window.ImageMapPro.changeArtboard('diakonessenhuis', 'overview')
-    }
     returnToAllInfusions()
+
     return
   }
-  filterAllInfusions(newAfdeling)
+  filterAllInfusionsNoMap(newAfdeling)
   excecuteFilters()
 })
 
@@ -229,7 +167,7 @@ watch(afdeling, (newAfdeling) => {
 function filterCurrentInfusionsWithStackSupport(predicateFn) {
   const result = []
 
-  for (const item of currentInfusions) {
+  for (const item of currentInfusions.value) {
     if (Array.isArray(item.pumps)) {
       const filteredPumps = item.pumps.filter(predicateFn)
       if (filteredPumps.length > 0) {
@@ -250,33 +188,34 @@ function filterCurrentInfusionsWithStackSupport(predicateFn) {
 
 //filter functions of the current 3 buttons
 function FilterNonRun() {
-  currentInfusions = filterCurrentInfusionsWithStackSupport(
+  updateInfusions(filterCurrentInfusionsWithStackSupport(
     (infusion) => infusion.timeRemaining === 'Infusion not running',
-  )
-  if (currentInfusions.length === 0) {
+  ))
+
+  if (currentInfusions.value.length === 0) {
     console.warn('No non-running infusions found.')
   }
 }
 
 function FilterBelow10() {
-  currentInfusions = filterCurrentInfusionsWithStackSupport(
+  updateInfusions(filterCurrentInfusionsWithStackSupport(
     (infusion) => infusion.totalMl / infusion.remainingMl > 10,
-  )
+  ))
 }
 
 function FilterLessThenHour() {
-  currentInfusions = filterCurrentInfusionsWithStackSupport((infusion) => {
+  updateInfusions(filterCurrentInfusionsWithStackSupport((infusion) => {
     if (infusion.timeRemaining === 'Infusion not running') return false
     const [hours] = infusion.timeRemaining.split(':')
     return Number(hours) < 1
-  })
+  }))
 }
 
 function FilterStacksOnly() {
-  currentInfusions = currentInfusions.filter(
+  updateInfusions(currentInfusions.value.filter(
     (infusion) => infusion.pumps && infusion.pumps.length > 0,
-  )
-  if (currentInfusions.length === 0) {
+  ))
+  if (currentInfusions.value.length === 0) {
     console.warn('No pump stacks found.')
   }
 }
@@ -338,7 +277,7 @@ function sortInfusions(newSortChoice) {
   }
 
   function sortInfusionsBy(key, compareFn = null) {
-    currentInfusions = currentInfusions.map((item) => {
+    updateInfusions(currentInfusions.value.map((item) => {
       if (item.pumps) {
         return {
           ...item,
@@ -347,16 +286,17 @@ function sortInfusions(newSortChoice) {
       } else {
         return item
       }
-    })
+    }))
 
-    const regulars = currentInfusions.filter((i) => !i.pumps)
-    const stacks = currentInfusions.filter((i) => i.pumps)
+
+    const regulars = currentInfusions.value.filter((i) => !i.pumps)
+    const stacks = currentInfusions.value.filter((i) => i.pumps)
 
     const sortedRegulars = compareFn
       ? regulars.slice().sort(compareFn)
       : regulars.slice().sort((a, b) => (a[key] > b[key] ? 1 : -1))
 
-    currentInfusions = [...sortedRegulars, ...stacks]
+    updateInfusions([...sortedRegulars, ...stacks])
     if (toggleState.value === true) reverse()
   }
 
@@ -399,7 +339,7 @@ watch(toggleStateMultiple, (newToggleStateMultiple) => {
 })
 
 function reverse() {
-  currentInfusions = currentInfusions.reverse()
+  updateInfusions(currentInfusions.value.reverse())
 }
 const toggleGroupItemClasses =
   'hover:bg-gray-100  data-[state=on]:bg-blue-500 data-[state=on]:text-white  flex h-[35px] xl:w-[20vw] md:w-[35vw] w-[30vw] items-center justify-center bg-white text-base leading-4 first:rounded-l last:rounded-r focus:z-10 focus:shadow-[0_0_0_2px] focus:shadow-black focus:outline-none dark:bg-gray-300  dark:border-gray-600 dark:hover:bg-gray-400 dark:data-[state=on]:bg-gray-400 '
@@ -416,7 +356,7 @@ const toggleGroupItemClasses =
       <h1
         class="text-white font-script font-bold text-bold text-4xl left-[46vw] md:top-4 absolute md:mr-[28vw] mr-[4vw] md:visible invisible h-[3vw]"
       >
-        {{ afdeling }}
+        {{ afdeling }} , {{(amountOfInfusions)}} infusions, {{amountOfInfusionsWithStacks}} Pumpstacks
       </h1>
       <select
         v-model="afdeling"
