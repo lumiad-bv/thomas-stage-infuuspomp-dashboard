@@ -104,25 +104,30 @@ onMounted(() => {
 const sortChoice = ref(null)
 // a save location for the previous sorting choice to permit sorting in reverse
 
-
 // Functions to filter infusions based on afdeling (department)
 function filterWithPumpstacks(afdeling) {
-  const result = [];
+  const result = []
 
-  const isFloor =
-    ['main floor', '1st floor', '2nd floor', '3rd floor', '4th floor', '5th floor'].includes(afdeling);
+  const isFloor = [
+    'main floor',
+    '1st floor',
+    '2nd floor',
+    '3rd floor',
+    '4th floor',
+    '5th floor',
+  ].includes(afdeling)
 
   for (const item of PumpStackInfusions) {
     // Regular infusions
     if (!item.pumps) {
       const match = isFloor
-        ? (afdeling === 'main floor'
+        ? afdeling === 'main floor'
           ? item.floor?.substring(0, 4) === afdeling.substring(0, 4)
-          : item.floor?.substring(0, 3) === afdeling.substring(0, 3))
-        : item.department === afdeling;
+          : item.floor?.substring(0, 3) === afdeling.substring(0, 3)
+        : item.department === afdeling
 
       if (match) {
-        result.push(item);
+        result.push(item)
       }
     }
 
@@ -130,52 +135,67 @@ function filterWithPumpstacks(afdeling) {
     if (Array.isArray(item.pumps)) {
       const filteredPumps = item.pumps.filter((pump) => {
         return isFloor
-          ? (afdeling === 'main floor'
+          ? afdeling === 'main floor'
             ? pump.floor?.substring(0, 4) === afdeling.substring(0, 4)
-            : pump.floor?.substring(0, 3) === afdeling.substring(0, 3))
-          : pump.department === afdeling;
-      });
+            : pump.floor?.substring(0, 3) === afdeling.substring(0, 3)
+          : pump.department === afdeling
+      })
 
       if (filteredPumps.length > 0) {
         result.push({
           id_stack_number: item.id_stack_number,
           pumps: filteredPumps,
-        });
+        })
       }
     }
   }
 
-  return result;
+  return result
 }
 
 function filterAllInfusions(afdeling) {
   // selectedButtoneStore.currentDepartment = afdeling;
-  currentInfusions = filterWithPumpstacks(afdeling);
+  currentInfusions = filterWithPumpstacks(afdeling)
 
   if (window.ImageMapPro) {
-    const isFloor = ['main floor', '1st floor', '2nd floor', '3rd floor', '4th floor', '5th floor'].includes(afdeling);
+    const isFloor = [
+      'main floor',
+      '1st floor',
+      '2nd floor',
+      '3rd floor',
+      '4th floor',
+      '5th floor',
+    ].includes(afdeling)
 
     if (isFloor) {
-      sortChoice.value = afdeling;
-      window.ImageMapPro.changeArtboard('diakonessenhuis', afdeling);
+      sortChoice.value = afdeling
+      window.ImageMapPro.changeArtboard('diakonessenhuis', afdeling)
     } else if (currentInfusions.length > 0) {
-      const first = currentInfusions.find((inf) => !inf.pumps) || currentInfusions[0].pumps?.[0];
-      const floor = first?.floor || '';
-      window.ImageMapPro.changeArtboard('diakonessenhuis', floor + ' floor');
-      if (selectedButtoneStore.currentFloor === (floor + ' floor') && !['main floor', '1st floor', '2nd floor', '3rd floor', '4th floor', '5th floor'].includes(selectedButtoneStore.currentDepartment)) {
-        console.log(selectedButtoneStore.currentDepartment, 'unhighlighting');
-        window.ImageMapPro.unhighlightObject('diakonessenhuis', selectedButtoneStore.currentDepartment);
+      const first = currentInfusions.find((inf) => !inf.pumps) || currentInfusions[0].pumps?.[0]
+      const floor = first?.floor || ''
+      window.ImageMapPro.changeArtboard('diakonessenhuis', floor + ' floor')
+      if (
+        selectedButtoneStore.currentFloor === floor + ' floor' &&
+        !['main floor', '1st floor', '2nd floor', '3rd floor', '4th floor', '5th floor'].includes(
+          selectedButtoneStore.currentDepartment,
+        )
+      ) {
+        console.log(selectedButtoneStore.currentDepartment, 'unhighlighting')
+        window.ImageMapPro.unhighlightObject(
+          'diakonessenhuis',
+          selectedButtoneStore.currentDepartment,
+        )
       }
-      selectedButtoneStore.currentFloor = floor + ' floor';
-      selectedButtoneStore.currentDepartment = afdeling;
+      selectedButtoneStore.currentFloor = floor + ' floor'
+      selectedButtoneStore.currentDepartment = afdeling
 
-      window.ImageMapPro.highlightObject('diakonessenhuis', afdeling);
+      window.ImageMapPro.highlightObject('diakonessenhuis', afdeling)
     }
   }
 }
 function filterAllInfusionsNoMap(afdeling) {
-  selectedButtoneStore.currentDepartment = afdeling;
-  currentInfusions = filterWithPumpstacks(afdeling);
+  selectedButtoneStore.currentDepartment = afdeling
+  currentInfusions = filterWithPumpstacks(afdeling)
 }
 
 function returnToAllInfusions() {
@@ -207,55 +227,57 @@ watch(afdeling, (newAfdeling) => {
 
 // Function to filter current infusions with stack support
 function filterCurrentInfusionsWithStackSupport(predicateFn) {
-  const result = [];
+  const result = []
 
   for (const item of currentInfusions) {
     if (Array.isArray(item.pumps)) {
-      const filteredPumps = item.pumps.filter(predicateFn);
+      const filteredPumps = item.pumps.filter(predicateFn)
       if (filteredPumps.length > 0) {
         result.push({
           id_stack_number: item.id_stack_number,
           pumps: filteredPumps,
-        });
+        })
       }
     } else {
       if (predicateFn(item)) {
-        result.push(item);
+        result.push(item)
       }
     }
   }
 
-  return result;
+  return result
 }
 
 //filter functions of the current 3 buttons
 function FilterNonRun() {
   currentInfusions = filterCurrentInfusionsWithStackSupport(
-    (infusion) => infusion.timeRemaining === 'Infusion not running'
-  );
+    (infusion) => infusion.timeRemaining === 'Infusion not running',
+  )
   if (currentInfusions.length === 0) {
-    console.warn('No non-running infusions found.');
+    console.warn('No non-running infusions found.')
   }
 }
 
 function FilterBelow10() {
   currentInfusions = filterCurrentInfusionsWithStackSupport(
-    (infusion) => infusion.totalMl / infusion.remainingMl > 10
-  );
+    (infusion) => infusion.totalMl / infusion.remainingMl > 10,
+  )
 }
 
 function FilterLessThenHour() {
   currentInfusions = filterCurrentInfusionsWithStackSupport((infusion) => {
-    if (infusion.timeRemaining === 'Infusion not running') return false;
-    const [hours] = infusion.timeRemaining.split(':');
-    return Number(hours) < 1;
-  });
+    if (infusion.timeRemaining === 'Infusion not running') return false
+    const [hours] = infusion.timeRemaining.split(':')
+    return Number(hours) < 1
+  })
 }
 
-function FilterStacksOnly(){
-  currentInfusions = currentInfusions.filter((infusion) => infusion.pumps && infusion.pumps.length > 0);
+function FilterStacksOnly() {
+  currentInfusions = currentInfusions.filter(
+    (infusion) => infusion.pumps && infusion.pumps.length > 0,
+  )
   if (currentInfusions.length === 0) {
-    console.warn('No pump stacks found.');
+    console.warn('No pump stacks found.')
   }
 }
 
@@ -300,7 +322,6 @@ function timeToSeconds(time) {
   return hours * 60 + seconds // Convert to total minutes (HH treated as minutes)
 }
 
-
 function sortInfusions(newSortChoice) {
   function sortPumpsArray(pumps, key, customSortFn = null) {
     return pumps.slice().sort((a, b) => {
@@ -310,7 +331,8 @@ function sortInfusions(newSortChoice) {
   }
 
   function calculateTimeValue(infusion) {
-    const time = infusion.timeRemaining === 'Infusion not running' ? '9999:59' : infusion.timeRemaining
+    const time =
+      infusion.timeRemaining === 'Infusion not running' ? '9999:59' : infusion.timeRemaining
     const normalized = time.length < 5 ? `0${time}` : time
     return timeToSeconds(normalized)
   }
@@ -381,7 +403,6 @@ function reverse() {
 }
 const toggleGroupItemClasses =
   'hover:bg-gray-100  data-[state=on]:bg-blue-500 data-[state=on]:text-white  flex h-[35px] xl:w-[20vw] md:w-[35vw] w-[30vw] items-center justify-center bg-white text-base leading-4 first:rounded-l last:rounded-r focus:z-10 focus:shadow-[0_0_0_2px] focus:shadow-black focus:outline-none dark:bg-gray-300  dark:border-gray-600 dark:hover:bg-gray-400 dark:data-[state=on]:bg-gray-400 '
-
 </script>
 
 <template>
@@ -411,118 +432,110 @@ const toggleGroupItemClasses =
         </option>
       </select>
     </header>
-    <section class="md:flex 4xl:h-[78.9vh] md:h-[75vh] overflow-hidden dark:bg-black">
+    <section class="md:flex 4xl:h-[88.9vh] md:h-[85vh] dark:bg-black">
       <div
-        class="md:m-3 xl:h-[77vh] md:w-[50vw] xl:w-[50vw] relative md:rounded-[1vw] bg-yellow-200 dark:bg-gray-500 p-2"
+        class="w-[100vw] h-[90vh] m-3 xl:static bg-gray-200 dark:bg-gray-500 md:rounded-[1vw] rounded-[3vw] p-2 overflow-x-hidden"
       >
-
-          <div
-            class="xl:w-[50vw] md:w-[45vw] 4xl:h-[77vh] xl:h-[75vh] m-3 flex-initial bg-green-200 dark:bg-gray-500 md:rounded-[1vw] rounded-[3vw] p-2 overflow-x-hidden"
+        <div>
+          <ToggleGroupRoot v-model="toggleStateMultiple" type="multiple" class="flex">
+            <ToggleGroupItem value="nonRun" :class="toggleGroupItemClasses">
+              Non-running
+            </ToggleGroupItem>
+            <ToggleGroupItem value="below10" :class="toggleGroupItemClasses">
+              Below 10%
+            </ToggleGroupItem>
+            <ToggleGroupItem value="1hour" :class="toggleGroupItemClasses">
+              Less then 1 hour
+            </ToggleGroupItem>
+            <ToggleGroupItem value="stacks" :class="toggleGroupItemClasses">
+              Available pumpstacks
+            </ToggleGroupItem>
+          </ToggleGroupRoot>
+        </div>
+        <div class="grid grid-cols-8">
+          <select
+            v-model="sortChoice"
+            class="w-[78vw] col-span-7 xl:w-full bg-gray-50 border border-gray-300 hover:bg-gray-100 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-300 dark:border-gray-600 dark:hover:bg-gray-400 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
           >
-            <div>
-              <ToggleGroupRoot v-model="toggleStateMultiple" type="multiple" class="flex">
-                <ToggleGroupItem value="nonRun" :class="toggleGroupItemClasses">
-                  Non-running
-                </ToggleGroupItem>
-                <ToggleGroupItem value="below10" :class="toggleGroupItemClasses">
-                  Below 10%
-                </ToggleGroupItem>
-                <ToggleGroupItem value="1hour" :class="toggleGroupItemClasses">
-                  Less then 1 hour
-                </ToggleGroupItem>
-                <ToggleGroupItem value="stacks" :class="toggleGroupItemClasses">
-                  Available pumpstacks
-                </ToggleGroupItem>
-              </ToggleGroupRoot>
-            </div>
-            <div class="grid grid-cols-8">
-              <select
-                v-model="sortChoice"
-                class="w-[78vw] col-span-7 xl:w-full bg-gray-50 border border-gray-300 hover:bg-gray-100 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-300 dark:border-gray-600 dark:hover:bg-gray-400 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              >
-                <option selected disabled>Sort by</option>
-                <option value="remainingMl">remaining %IV</option>
-                <option value="time">Remaining time</option>
-                <option value="department">Department</option>
-                <option value="bed">bed</option>
-                <option value="drug">Drug</option>
-              </select>
-              <Toggle
-                v-model:pressed="toggleState"
-                aria-label="Toggle italic"
-                class="hover:bg-gray-100 text-black data-[state=on]:bg-blue-500 data-[state=on]:text-white flex items-center justify-center rounded bg-gray-50 border border-gray-300"
-              >
-                <Icon icon="radix-icons:caret-sort" class="color-black" />
-              </Toggle>
-            </div>
-
-            <div
-              class="4xl:m-3 md:m-1 m-2 4xl:h-[68vh] xl:h-[60vh] md:h-[60.2vh] h-[51.3vh]  overflow-auto"
-            >
-              <div v-for="item in currentInfusions" :key="item.id || item.id_stack_number" class="mb-2">
-                <!-- Regular infusion -->
-                <InfusionButtons
-                  v-if="!item.pumps"
-                  :department="item.department"
-                  :floor="item.floor"
-                  :ward="item.ward"
-                  :bed="item.bed"
-                  :drug="item.drug"
-                  :status="item.status"
-                  :totalMl="item.totalMl"
-                  :remainingMl="item.remainingMl"
-                  :mlPerHour="item.mlPerHour"
-                  :time-running="item.timeRunning"
-                  :timeRemaining="item.timeRemaining"
-                  :id="item.id"
-                  :softwareVersion="item.softwareVersion"
-                  :medicalLibraryVersion="item.medicalLibraryVersion"
-                />
-
-                <!-- Stacked infusions -->
-                <div v-else class="border border-gray-500 rounded-xl bg-white  shadow">
-                  <div class="font-semibold mb-2 text-gray-700 text-center">
-                    Stack: {{ item.id_stack_number }}
-                  </div>
-                  <div class=" gap-2">
-                    <InfusionButtons
-                      v-for="pump in item.pumps"
-                      :key="pump.id"
-                      :department="pump.department"
-                      :floor="pump.floor"
-                      :ward="pump.ward"
-                      :bed="pump.bed"
-                      :drug="pump.drug"
-                      :status="pump.status"
-                      :totalMl="pump.totalMl"
-                      :remainingMl="pump.remainingMl"
-                      :mlPerHour="pump.mlPerHour"
-                      :time-running="pump.timeRunning"
-                      :timeRemaining="pump.timeRemaining"
-                      :id="pump.id"
-                      :softwareVersion="pump.softwareVersion"
-                      :medicalLibraryVersion="pump.medicalLibraryVersion"
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
-
+            <option selected disabled>Sort by</option>
+            <option value="remainingMl">remaining %IV</option>
+            <option value="time">Remaining time</option>
+            <option value="department">Department</option>
+            <option value="bed">bed</option>
+            <option value="drug">Drug</option>
+          </select>
+          <Toggle
+            v-model:pressed="toggleState"
+            aria-label="Toggle italic"
+            class="hover:bg-gray-100 text-black data-[state=on]:bg-blue-500 data-[state=on]:text-white flex items-center justify-center rounded bg-gray-50 border border-gray-300"
+          >
+            <Icon icon="radix-icons:caret-sort" class="color-black" />
+          </Toggle>
         </div>
 
+        <div
+          class="4xl:m-3 md:m-1 m-2 4xl:h-[80vh] xl:h-[70vh] md:h-[70.2vh] h-[71.3vh] overflow-auto border-2 border-solid"
+        >
+          <div v-for="item in currentInfusions" :key="item.id || item.id_stack_number" class="mb-2">
+            <!-- Regular infusion -->
+            <InfusionButtons
+              v-if="!item.pumps"
+              :department="item.department"
+              :floor="item.floor"
+              :ward="item.ward"
+              :bed="item.bed"
+              :drug="item.drug"
+              :status="item.status"
+              :totalMl="item.totalMl"
+              :remainingMl="item.remainingMl"
+              :mlPerHour="item.mlPerHour"
+              :time-running="item.timeRunning"
+              :timeRemaining="item.timeRemaining"
+              :id="item.id"
+              :softwareVersion="item.softwareVersion"
+              :medicalLibraryVersion="item.medicalLibraryVersion"
+            />
+
+            <!-- Stacked infusions -->
+            <div v-else class="border border-gray-500 rounded-xl bg-white shadow">
+              <div class="font-semibold mb-2 text-gray-700 text-center">
+                Stack: {{ item.id_stack_number }}
+              </div>
+              <div class="gap-2">
+                <InfusionButtons
+                  v-for="pump in item.pumps"
+                  :key="pump.id"
+                  :department="pump.department"
+                  :floor="pump.floor"
+                  :ward="pump.ward"
+                  :bed="pump.bed"
+                  :drug="pump.drug"
+                  :status="pump.status"
+                  :totalMl="pump.totalMl"
+                  :remainingMl="pump.remainingMl"
+                  :mlPerHour="pump.mlPerHour"
+                  :time-running="pump.timeRunning"
+                  :timeRemaining="pump.timeRemaining"
+                  :id="pump.id"
+                  :softwareVersion="pump.softwareVersion"
+                  :medicalLibraryVersion="pump.medicalLibraryVersion"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
-    </section>
-    <section class="xl:flex overflow-hidden dark:bg-black">
       <div
-        class="xl:m-3 4xl:h-[11.25vh] xl:static xl:h-[14.5vh] 4XL:w-[100vw] xl:w-[100vw] flex-initial md:rounded-[1vw] rounded-[3vw] bg-vlue-200 dark:bg-gray-500"
+        class="xl:m-3 xl:static h-[90vh] 4XL:w-[100vw] xl:w-[100vw] flex-initial rounded-[3vw] bg-white dark:bg-gray-500"
       >
         <div
           id="infuusDetails"
-          class="4XL:w-[98vw] xl:static xl:w-[96vw] flex-initial overflow-hidden rounded-[2vw] p-5 font-[Open_Sans] text-2xl text-ellipsis [&::-webkit-scrollbar]:[width:10px] [&::-webkit-scrollbar]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-400"
+          class="bg-gray-200 xl:static flex-initial overflow-hidden rounded-[1vw] p-5 font-[Open_Sans] text-2xl text-ellipsis [&::-webkit-scrollbar]:[width:10px] [&::-webkit-scrollbar]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-400"
         >
           <RouterView />
         </div>
+        <div class="bg-gray-200 static flex-initial p-5 mt-2 h-[24vh] rounded-[1vw]"></div>
       </div>
     </section>
   </body>

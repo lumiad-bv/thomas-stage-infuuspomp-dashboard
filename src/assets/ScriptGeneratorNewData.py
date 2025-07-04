@@ -84,7 +84,6 @@ def generate_data(num_entries):
                     bed = f'bed {tempbed}'
                 while len(stackdata["pumps"]) < numPumps:
                     pumpdrugname = random.choice(drugs)
-                    status = random.choice(["green", "orange", "red"])
                     total_ml = random.randint(100, 600)
                     remaining_ml = random.randint(0, total_ml)
                     actRate = random.randint(0, 25)
@@ -135,7 +134,6 @@ def generate_data(num_entries):
                             "ward": ward,
                             "bed": bed,
                             "drug": pumpdrugname,
-                            "status": status,
                             "totalMl": total_ml,
                             "remainingMl": remaining_ml,
                             "mlPerHour": actRate,
@@ -159,7 +157,6 @@ def generate_data(num_entries):
         else:
             bed = f'bed {tempbed}'
         pumpdrugname = random.choice(drugs)
-        status = random.choice(["green", "orange", "red"])
         total_ml = random.randint(100, 600)
         remaining_ml = random.randint(0, total_ml)
         actRate = random.randint(0, 25)
@@ -210,7 +207,6 @@ def generate_data(num_entries):
                 "ward": ward,
                 "bed": bed,
                 "drug": pumpdrugname,
-                "status": status,
                 "totalMl": total_ml,
                 "remainingMl": remaining_ml,
                 "mlPerHour": actRate,
