@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch, onMounted, computed } from 'vue'
+import { ref, watch, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import PumpStackInfusions from '@/assets/generated_data_with_pumpstacks.json'
 const pumpStack = ref(null)

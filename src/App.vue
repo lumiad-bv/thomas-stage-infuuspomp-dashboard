@@ -345,9 +345,6 @@ function reverse() {
 const toggleGroupItemClasses =
   'hover:bg-gray-100  data-[state=on]:bg-blue-500 data-[state=on]:text-white  flex h-[35px] xl:w-[20vw] md:w-[35vw] w-[30vw] items-center justify-center bg-white text-base leading-4 first:rounded-l last:rounded-r focus:z-10 focus:shadow-[0_0_0_2px] focus:shadow-black focus:outline-none dark:bg-gray-300  dark:border-gray-600 dark:hover:bg-gray-400 dark:data-[state=on]:bg-gray-400 '
 
-function greet(id) {
-  alert(`Hello ${id}!`)
-}
 const route = useRouter()
 function routeIt(stackId) {
   selectedButtoneStore.pressedButtonId = stackId
