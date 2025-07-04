@@ -7,6 +7,7 @@ import { ToggleGroupItem, ToggleGroupRoot, Toggle } from 'radix-vue'
 import InfusionButtons from '@/components/InfusionButtons.vue'
 import { Icon } from '@iconify/vue'
 import { selectedButtoneStore } from '@/stores/selectedButtonStore.js'
+import { useRouter } from 'vue-router'
 
 const currentInfusions = ref([]) // ✅ ref makes it reactive
 
@@ -343,6 +344,15 @@ function reverse() {
 }
 const toggleGroupItemClasses =
   'hover:bg-gray-100  data-[state=on]:bg-blue-500 data-[state=on]:text-white  flex h-[35px] xl:w-[20vw] md:w-[35vw] w-[30vw] items-center justify-center bg-white text-base leading-4 first:rounded-l last:rounded-r focus:z-10 focus:shadow-[0_0_0_2px] focus:shadow-black focus:outline-none dark:bg-gray-300  dark:border-gray-600 dark:hover:bg-gray-400 dark:data-[state=on]:bg-gray-400 '
+
+function greet(id) {
+  alert(`Hello ${id}!`)
+}
+const route = useRouter()
+function routeIt(stackId) {
+  selectedButtoneStore.pressedButtonId = stackId
+  route.push({ name: 'stack-details', params: { stackId: stackId } })
+}
 </script>
 
 <template>
@@ -438,7 +448,7 @@ const toggleGroupItemClasses =
 
             <!-- Stacked infusions -->
             <div v-else class="border border-gray-500 rounded-xl bg-white shadow">
-              <div class="font-semibold mb-2 text-gray-700 text-center">
+              <div class="font-semibold mb-2 text-gray-700 text-center cursor-pointer" @click="routeIt(item.id_stack_number )">
                 Stack: {{ item.id_stack_number }}
               </div>
               <div class="gap-2">

@@ -70,7 +70,9 @@ def generate_data(num_entries):
             id_stack_number = random.randint(10000000, 99999999)
             if id_stack_number not in unique_stack_ids:
                 stackdata = {
-                    "id_stack_number": id_stack_number,
+                    "id_stack_number": str(id_stack_number),
+                    "softwareVersion": "3.154",
+                    "medicalLibraryVersion": "1.3",
                     "pumps": []
                 }
                 numPumps = random.randint(2, 8)
