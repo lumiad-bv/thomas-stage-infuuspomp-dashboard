@@ -7,6 +7,7 @@ import { ToggleGroupItem, ToggleGroupRoot, Toggle } from 'radix-vue'
 import InfusionButtons from '@/components/InfusionButtons.vue'
 import { Icon } from '@iconify/vue'
 import { selectedButtoneStore } from '@/stores/selectedButtonStore.js'
+import {infusionsForPdfStore} from '@/stores/infusionsForPdfStore.js'
 import StackButtons from '@/components/StackButtons.vue'
 
 // a test to see if pdfmake works in this application
@@ -15,6 +16,8 @@ import * as pdfFonts from 'pdfmake/build/vfs_fonts'
 
 // ✅ Correct way to access vfs
 pdfMake.vfs = pdfFonts.default.vfs
+
+
 
 function downloadPdf() {
   const docDefinition = {
@@ -408,6 +411,8 @@ const toggleGroupItemClasses =
           {{ option }}
         </option>
       </select>
+      <div class="bg-green-600">amount selected</div>
+      <button class=" flex justify-center items-center bg-red-700 cursor-pointer hover:bg-red-500 hover:text-white rounded-2xl " @click="downloadPdf">Download PDF</button>
     </header>
     <section class="md:flex 4xl:h-[88.9vh] md:h-[85vh] dark:bg-black">
       <div
