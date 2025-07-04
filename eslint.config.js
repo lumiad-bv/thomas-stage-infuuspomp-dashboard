@@ -7,37 +7,38 @@ import skipFormatting from '@vue/eslint-config-prettier/skip-formatting'
 export default [
   {
     name: 'app/files-to-lint',
-    files: ['**/*.{js,mjs,jsx,ts,tsx,vue}'], // ✅ include TS
+    files: ['**/*.{js,mjs,jsx,ts,tsx,vue}'],
   },
   {
     name: 'app/files-to-ignore',
     ignores: ['**/dist/**', '**/dist-ssr/**', '**/coverage/**', '**/image-map-pro.min.js'],
   },
 
-  // ✅ JS config
+  // ✅ JavaScript recommended rules
   js.configs.recommended,
 
-  // ✅ Vue config
-  ...pluginVue.configs['flat/essential'],
-
-  // ✅ TypeScript config
+  // ✅ Vue + TypeScript integration
   {
-    files: ['**/*.ts', '**/*.tsx', '**/*.vue'],
+    files: ['**/*.vue', '**/*.ts', '**/*.tsx'],
     languageOptions: {
-      parser: parserTypeScript,
+      parser: require.resolve('vue-eslint-parser'),
       parserOptions: {
+        parser: require.resolve('@typescript-eslint/parser'),
         ecmaVersion: 'latest',
         sourceType: 'module',
+        extraFileExtensions: ['.vue'],
       },
     },
     plugins: {
+      vue: pluginVue,
       '@typescript-eslint': pluginTypeScript,
     },
     rules: {
+      ...pluginVue.configs['flat/essential'].rules,
       ...pluginTypeScript.configs.recommended.rules,
     },
   },
 
-  // ✅ Prettier-style override
+  // ✅ Prettier-style disabling
   skipFormatting,
 ]
