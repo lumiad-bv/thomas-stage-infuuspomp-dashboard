@@ -420,7 +420,7 @@ const toggleGroupItemClasses =
         <div class="grid grid-cols-8">
           <select
             v-model="sortChoice"
-            class="hover:bg-gray-200 w-[78vw] col-span-7 xl:w-full bg-gray-50 border border-gray-300 hover:bg-gray-100 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-300 dark:border-gray-600 dark:hover:bg-gray-400 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            class="hover:bg-gray-200 w-[78vw] col-span-7 xl:w-full bg-gray-50 border border-gray-300  text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-300 dark:border-gray-600 dark:hover:bg-gray-400 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
           >
             <option selected disabled>Sort by</option>
             <option value="remainingMl">remaining %IV</option>
