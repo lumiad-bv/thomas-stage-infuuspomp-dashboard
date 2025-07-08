@@ -20,6 +20,17 @@ const inBasket = ref(false)
 pdfMake.vfs = pdfFonts.default.vfs
 const currentSelectedInfusion = ref(null)
 
+import infusionsModal from '@/components/infusionsModal.vue'
+
+const isModalVisible = ref(false)
+
+function showModal() {
+  isModalVisible.value = true
+}
+
+function closeModal() {
+  isModalVisible.value = false
+}
 
 watch(
   () => route.params.infusionId,
@@ -51,7 +62,23 @@ function findInfusionById(id) {
 }
 
 function downloadPdf() {
-  const infusionDoc = { content: []}
+  const infusionDoc = {
+    content: [],
+    background: 'simple text',
+    styles: {
+      header: {
+        fontSize: 22,
+        bold: true
+      },
+      anotherStyle: {
+        fontSize: 30,
+        bold: true,
+        italics: true,
+        alignment: 'right',
+        color: 'blue'
+      }
+    }}
+  infusionDoc.content.push({text: 'Lumiad-Arcomed', style: 'anotherStyle',})
   infusionDoc.content.push({ text: 'Here are the requested infusion details', fontSize: 18 })
   for (const item of pdfStore.getInfusions){
     console.log(item)
@@ -82,24 +109,6 @@ function downloadPdf() {
     )
 
   }
-  // const docDefinition = {
-  //   content: [
-  //     { text: 'Here are the current infusion details', fontSize: 18 },
-  //     { text: `Department: ${currentSelectedInfusion.value.department}`},
-  //     { text: `Floor: ${currentSelectedInfusion.value.floor}` },
-  //     { text: `Ward: ${currentSelectedInfusion.value.ward}` },
-  //     { text: `Bed: ${currentSelectedInfusion.value.bed}` },
-  //     { text: `Drug: ${currentSelectedInfusion.value.drug}` },
-  //     { text: `Total ml: ${currentSelectedInfusion.value.totalMl}` },
-  //     { text: `Remaining ml: ${currentSelectedInfusion.value.remainingMl}` },
-  //     { text: `ml per hour: ${currentSelectedInfusion.value.mlPerHour}` },
-  //     { text: `Time running: ${currentSelectedInfusion.value.timeRunning}` },
-  //     { text: `Time remaining: ${currentSelectedInfusion.value.timeRemaining}` },
-  //     { text: `ID: ${currentSelectedInfusion.value.id}` },
-  //     { text: `Software Version: ${currentSelectedInfusion.value.softwareVersion}` },
-  //     { text: `Medical Library Version: ${currentSelectedInfusion.value.medicalLibraryVersion}` }
-  //   ]
-  // }
   let title= Date.now()
   pdfMake.createPdf(infusionDoc).download(`${title}_infusion_details.pdf`)
 }
@@ -498,9 +507,17 @@ const toggleGroupItemClasses =
           {{ option }}
         </option>
       </select>
-      <div class="bg-green-600 hover:bg-green-400 mr-2 ml-2 rounded-2xl text-center flex justify-center text-white cursor-pointer">{{pdfStore.getAmountOfPDF}} infusions</div>
+
+
+
+      <div class="bg-green-600 hover:bg-green-400 mr-2 ml-2 rounded-2xl text-center flex justify-center text-white cursor-pointer" @click="showModal">{{pdfStore.getAmountOfPDF}} infusions</div>
       <button class=" flex justify-center items-center bg-red-700 cursor-pointer hover:bg-red-500 text-white rounded-2xl " @click="downloadPdf">Download PDF</button>
     </header>
+
+    <infusionsModal
+      v-show="isModalVisible"
+      @close="closeModal"
+    />
     <section class="md:flex 4xl:h-[88.9vh] md:h-[85vh] dark:bg-black">
       <div
         class="w-[100vw] h-[90vh] m-3 xl:static bg-gray-200 dark:bg-gray-500 md:rounded-[1vw] rounded-[3vw] p-2 overflow-x-hidden"
