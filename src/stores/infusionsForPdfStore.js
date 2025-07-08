@@ -8,6 +8,7 @@ export const useInfusionsForPdfStore = defineStore('infusionsForPdf', {
   getters: {
     getInfusions: (state) => state.infusions,
     getAmountOfPDF: (state) => state.amountOfPDF,
+    hasId: (state) => (id) => state.infusions.some(infusion => infusion.id === id)
   },
   actions: {
     addInfusion(infusion) {
@@ -18,9 +19,8 @@ export const useInfusionsForPdfStore = defineStore('infusionsForPdf', {
       }
     },
     removeInfusion(infusion) {
-      const index = this.infusions.indexOf(infusion)
-      if (index !== -1) {
-        this.infusions.splice(index, 1)
+      if (this.infusions.includes(infusion)) {
+        this.infusions.splice(this.infusions.indexOf(infusion), 1)
         this.setAmountOfPDF(this.infusions.length)
         console.log('Infusion removed:', infusion)
       }
