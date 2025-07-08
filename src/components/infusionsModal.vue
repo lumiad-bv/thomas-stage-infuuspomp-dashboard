@@ -4,7 +4,6 @@ import pdfMake from 'pdfmake/build/pdfmake'
 import * as pdfFonts from 'pdfmake/build/vfs_fonts'
 import { useInfusionsForPdfStore } from '@/stores/infusionsForPdfStore.js'
 import InfusionPrintButtons from '@/components/icons/infusionPrintButtons.vue'
-import lumiadlogo from '../assets/lumiad-logo.png'
 
 
 const infusionsForPdfStore = useInfusionsForPdfStore()
