@@ -1,5 +1,5 @@
 <script setup>
-import { RouterView } from 'vue-router'
+import { RouterView, useRoute } from 'vue-router'
 // import AllInfusions from '@/assets/generated_data_unique_with_time.json'
 import PumpStackInfusions from '@/assets/generated_data_with_pumpstacks.json'
 import { provide, ref, watch, computed, onMounted } from 'vue'
@@ -9,25 +9,56 @@ import { Icon } from '@iconify/vue'
 import { selectedButtoneStore } from '@/stores/selectedButtonStore.js'
 import {infusionsForPdfStore} from '@/stores/infusionsForPdfStore.js'
 import StackButtons from '@/components/StackButtons.vue'
-
+const route = useRoute()
 // a test to see if pdfmake works in this application
 import pdfMake from 'pdfmake/build/pdfmake'
 import * as pdfFonts from 'pdfmake/build/vfs_fonts'
 
 // ✅ Correct way to access vfs
 pdfMake.vfs = pdfFonts.default.vfs
+const currentSelectedInfusion = ref(null)
+watch(
+  () => route.params.infusionId,
+  (newId) => {
+    findInfusionById(newId)
+  },
+)
+function findInfusionById(id) {
+  for (const item of PumpStackInfusions) {
+    // Regular infusion
+    if (item.id === id) currentSelectedInfusion.value = item
 
+    // Pumpstack
+    if (Array.isArray(item.pumps)) {
+      const found = item.pumps.find((pump) => pump.id === id)
+      if (found) currentSelectedInfusion.value = found
+    }
+  }
 
+  return null // Not found
+}
 
 function downloadPdf() {
   const docDefinition = {
     content: [
-      { text: 'Hello PDFMake in Vue!', fontSize: 18 },
-      { text: 'It works now ✅' }
+      { text: 'Here are the current infusion details', fontSize: 18 },
+      { text: `Department: ${currentSelectedInfusion.value.department}`},
+      { text: `Floor: ${currentSelectedInfusion.value.floor}` },
+      { text: `Ward: ${currentSelectedInfusion.value.ward}` },
+      { text: `Bed: ${currentSelectedInfusion.value.bed}` },
+      { text: `Drug: ${currentSelectedInfusion.value.drug}` },
+      { text: `Total ml: ${currentSelectedInfusion.value.totalMl}` },
+      { text: `Remaining ml: ${currentSelectedInfusion.value.remainingMl}` },
+      { text: `ml per hour: ${currentSelectedInfusion.value.mlPerHour}` },
+      { text: `Time running: ${currentSelectedInfusion.value.timeRunning}` },
+      { text: `Time remaining: ${currentSelectedInfusion.value.timeRemaining}` },
+      { text: `ID: ${currentSelectedInfusion.value.id}` },
+      { text: `Software Version: ${currentSelectedInfusion.value.softwareVersion}` },
+      { text: `Medical Library Version: ${currentSelectedInfusion.value.medicalLibraryVersion}` }
     ]
   }
 
-  pdfMake.createPdf(docDefinition).download('example.pdf')
+  pdfMake.createPdf(docDefinition).download(`${currentSelectedInfusion.value.id}_infusion_details.pdf`)
 }
 
 
@@ -504,7 +535,7 @@ const toggleGroupItemClasses =
         >
           <RouterView />
         </div>
-        <div class="bg-gray-200 static flex-initial p-5 mt-2 h-[24vh] rounded-[1vw]">
+        <div class="bg-gray-200 static flex-initial p-5 mt-2 h-[24vh] rounded-[1vw]" v-if="currentSelectedInfusion">
           <button class=" flex justify-center items-center bg-blue-400 cursor-pointer hover:bg-blue-500 hover:text-white rounded-2xl w-44 h-44" @click="downloadPdf">Download PDF</button>
         </div>
       </div>
