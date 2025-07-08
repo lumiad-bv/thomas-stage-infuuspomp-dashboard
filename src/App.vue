@@ -7,7 +7,7 @@ import { ToggleGroupItem, ToggleGroupRoot, Toggle } from 'radix-vue'
 import InfusionButtons from '@/components/InfusionButtons.vue'
 import { Icon } from '@iconify/vue'
 import { selectedButtoneStore } from '@/stores/selectedButtonStore.js'
-import {infusionsForPdfStore} from '@/stores/infusionsForPdfStore.js'
+// import {infusionsForPdfStore} from '@/stores/infusionsForPdfStore.js'
 import StackButtons from '@/components/StackButtons.vue'
 const route = useRoute()
 // a test to see if pdfmake works in this application
