@@ -64,13 +64,13 @@ const notifier = computed(() => {
   <div>
     <button @click.stop="routeIt(props.id)" :class="notifier">
       <div :class="backgroundClass" id="{{props.id}}">{{ remainingPercentage }}%</div>
-      <div class=" truncate text-ellipsis">
+      <div class="truncate text-ellipsis">
         {{ props.timeRemaining }}
       </div>
-      <div class=" truncate pl-2 text-ellipsis">
+      <div class="truncate pl-2 text-ellipsis">
         {{ props.department }}
       </div>
-      <div class=" truncate pl-2 text-ellipsis">
+      <div class="truncate pl-2 text-ellipsis">
         {{ props.bed }}
       </div>
     </button>

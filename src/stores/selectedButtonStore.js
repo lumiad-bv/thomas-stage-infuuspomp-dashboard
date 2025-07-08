@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 
-export const useSelectedButtonStore  = defineStore('selectedButton', {
+export const useSelectedButtonStore = defineStore('selectedButton', {
   state: () => ({
     pressedButtonId: '',
     currentDepartment: '',
@@ -33,6 +33,6 @@ export const useSelectedButtonStore  = defineStore('selectedButton', {
       this.pressedButtonId = ''
       this.currentDepartment = ''
       this.currentFloor = ''
-    }
-  }
+    },
+  },
 })

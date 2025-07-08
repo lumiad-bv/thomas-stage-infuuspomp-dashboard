@@ -8,7 +8,7 @@ export const useInfusionsForPdfStore = defineStore('infusionsForPdf', {
   getters: {
     getInfusions: (state) => state.infusions,
     getAmountOfPDF: (state) => state.amountOfPDF,
-    hasId: (state) => (id) => state.infusions.some(infusion => infusion.id === id)
+    hasId: (state) => (id) => state.infusions.some((infusion) => infusion.id === id),
   },
   actions: {
     addInfusion(infusion) {
@@ -29,7 +29,7 @@ export const useInfusionsForPdfStore = defineStore('infusionsForPdf', {
       this.infusions = newInfusions
     },
     containsId(infusionId) {
-      return this.infusions.some(infusion => infusion.id === infusionId)
+      return this.infusions.some((infusion) => infusion.id === infusionId)
     },
     addToPdfCount() {
       this.amountOfPDF += 1

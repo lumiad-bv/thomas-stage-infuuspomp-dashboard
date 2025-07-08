@@ -1,7 +1,7 @@
 <script setup>
 import { computed } from 'vue'
 import { useSelectedButtonStore } from '@/stores/selectedButtonStore'
-import { useInfusionsForPdfStore} from '@/stores/infusionsForPdfStore.js'
+import { useInfusionsForPdfStore } from '@/stores/infusionsForPdfStore.js'
 const infusionsForPdfStore = useInfusionsForPdfStore()
 const selectedButtoneStore = useSelectedButtonStore()
 import { useRouter } from 'vue-router'
@@ -26,9 +26,9 @@ const route = useRouter()
 function routeIt(infusionID) {
   selectedButtoneStore.setPressedButtonId(infusionID)
   route.push({ name: 'Infusion-details', params: { infusionId: infusionID } })
-  }
+}
 function selectForPrint() {
-  if (infusionsForPdfStore.containsId(props.id)){
+  if (infusionsForPdfStore.containsId(props.id)) {
     infusionsForPdfStore.removeInfusion(props)
   } else {
     infusionsForPdfStore.addInfusion(props)
@@ -86,11 +86,7 @@ const notifier = computed(() => {
       <div class="w-[25vw] truncate pl-2 text-ellipsis">
         {{ props.bed }}
       </div>
-      <div @click.stop="selectForPrint"
-        :class="selected"
-      >
-
-      </div>
+      <div @click.stop="selectForPrint" :class="selected"></div>
     </button>
   </div>
 </template>

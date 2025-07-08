@@ -27,7 +27,6 @@ const props = defineProps<{
   pumps: Pump[]
 }>()
 
-
 const route = useRouter()
 function routeIt(stackId) {
   selectedButtoneStore.setPressedButtonId(stackId)
@@ -36,17 +35,14 @@ function routeIt(stackId) {
 
 const backgroundColour = computed(() => {
   if (props.id_stack_number === selectedButtoneStore.getPressedButtonId) {
-    return "4xl:w-[47VW] xl:w-[46.5VW] md:w-[50.5VW] w-[87vw] border border-gray-500 rounded-xl bg-blue-600 shadow hover:bg-blue-500 text-white cursor-pointer"
+    return '4xl:w-[47VW] xl:w-[46.5VW] md:w-[50.5VW] w-[87vw] border border-gray-500 rounded-xl bg-blue-600 shadow hover:bg-blue-500 text-white cursor-pointer'
   }
-  return "4xl:w-[47VW] xl:w-[46.5VW] md:w-[50.5VW] w-[87vw] border border-gray-500 rounded-xl bg-white shadow hover:bg-blue-500 hover:text-white cursor-pointer"
+  return '4xl:w-[47VW] xl:w-[46.5VW] md:w-[50.5VW] w-[87vw] border border-gray-500 rounded-xl bg-white shadow hover:bg-blue-500 hover:text-white cursor-pointer'
 })
 </script>
 
 <template>
-  <div
-    :class="backgroundColour"
-    @click="routeIt(props.id_stack_number)"
-  >
+  <div :class="backgroundColour" @click="routeIt(props.id_stack_number)">
     <div class="font-semibold mb-2 text-center">Stack: {{ props.id_stack_number }}</div>
     <div class="gap-2">
       <InfusionButtons
