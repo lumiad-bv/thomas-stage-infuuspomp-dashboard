@@ -1,6 +1,8 @@
 <script setup>
 import { computed } from 'vue'
 import { useSelectedButtonStore } from '@/stores/selectedButtonStore'
+import { useInfusionsForPdfStore} from '@/stores/infusionsForPdfStore.js'
+const infusionsForPdfStore = useInfusionsForPdfStore()
 const selectedButtoneStore = useSelectedButtonStore()
 import { useRouter } from 'vue-router'
 const props = defineProps({
@@ -25,7 +27,13 @@ function routeIt(infusionID) {
   selectedButtoneStore.setPressedButtonId(infusionID)
   route.push({ name: 'Infusion-details', params: { infusionId: infusionID } })
   }
-
+const selected = computed(() => {
+  if (infusionsForPdfStore.containsId(props.id)) {
+    return 'w-[1vw] rounded-2xl bg-green-500 truncate rounded-full pl-2 text-ellipsis text-white border-2 border-gray-700'
+  } else {
+    return 'w-[1vw] rounded-2xl bg-gray-500 truncate rounded-full pl-2 text-ellipsis text-white border-2 border-gray-700'
+  }
+})
 const backgroundClass = computed(() => {
   switch (true) {
     case remainingPercentage.value > 80:
@@ -74,9 +82,9 @@ const notifier = computed(() => {
         {{ props.bed }}
       </div>
       <div
-        class="xl:w-[3VW] w-[20vw] rounded-2xl bg-red-500 truncate pl-2 text-ellipsis text-white"
+        :class="selected"
       >
-        {{ props.drug }}
+
       </div>
     </button>
   </div>
