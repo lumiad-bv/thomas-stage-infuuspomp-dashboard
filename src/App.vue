@@ -15,14 +15,24 @@ const route = useRoute()
 // a test to see if pdfmake works in this application
 import pdfMake from 'pdfmake/build/pdfmake'
 import * as pdfFonts from 'pdfmake/build/vfs_fonts'
-
+const inBasket = ref(false)
 // ✅ Correct way to access vfs
 pdfMake.vfs = pdfFonts.default.vfs
 const currentSelectedInfusion = ref(null)
+
+
 watch(
   () => route.params.infusionId,
   (newId) => {
+    console.log('watch activated with id:', newId)
     findInfusionById(newId)
+    if (pdfStore.containsId(newId)) {
+      console.log(newId, ' already in download list')
+      inBasket.value = true
+    }
+    else {
+      inBasket.value = false
+    }
   },
 )
 function findInfusionById(id) {
@@ -41,28 +51,72 @@ function findInfusionById(id) {
 }
 
 function downloadPdf() {
-  const docDefinition = {
-    content: [
-      { text: 'Here are the current infusion details', fontSize: 18 },
-      { text: `Department: ${currentSelectedInfusion.value.department}`},
-      { text: `Floor: ${currentSelectedInfusion.value.floor}` },
-      { text: `Ward: ${currentSelectedInfusion.value.ward}` },
-      { text: `Bed: ${currentSelectedInfusion.value.bed}` },
-      { text: `Drug: ${currentSelectedInfusion.value.drug}` },
-      { text: `Total ml: ${currentSelectedInfusion.value.totalMl}` },
-      { text: `Remaining ml: ${currentSelectedInfusion.value.remainingMl}` },
-      { text: `ml per hour: ${currentSelectedInfusion.value.mlPerHour}` },
-      { text: `Time running: ${currentSelectedInfusion.value.timeRunning}` },
-      { text: `Time remaining: ${currentSelectedInfusion.value.timeRemaining}` },
-      { text: `ID: ${currentSelectedInfusion.value.id}` },
-      { text: `Software Version: ${currentSelectedInfusion.value.softwareVersion}` },
-      { text: `Medical Library Version: ${currentSelectedInfusion.value.medicalLibraryVersion}` }
-    ]
-  }
+  const infusionDoc = { content: []}
+  infusionDoc.content.push({ text: 'Here are the requested infusion details', fontSize: 18 })
+  for (const item of pdfStore.getInfusions){
+    console.log(item)
+    infusionDoc.content.push(
+      {layout: 'lightHorizontalLines',
+        margin: [20, 10, 20, 10],
+        table: {
+          headerRows: 1,
+          widths: ['*',  '*'],
+          body: [
+            ['Field',  'Value'], // Header row
 
-  pdfMake.createPdf(docDefinition).download(`${currentSelectedInfusion.value.id}_infusion_details.pdf`)
+            ['Department:',  item.department],
+            ['Floor:',  item.floor],
+            ['Ward:',  item.ward],
+            ['Bed:',  item.bed],
+            ['Drug:',  item.drug],
+            ['Total ml:',  item.totalMl],
+            ['Remaining ml:',  item.remainingMl],
+            ['ml per hour:',  item.mlPerHour],
+            ['Time running:',  item.timeRunning],
+            ['Time remaining:',  item.timeRemaining],
+            ['ID:',  item.id],
+            ['Software Version:',  item.softwareVersion],
+            ['Medical Library Version:',  item.medicalLibraryVersion],
+          ]
+        }}
+    )
+
+  }
+  // const docDefinition = {
+  //   content: [
+  //     { text: 'Here are the current infusion details', fontSize: 18 },
+  //     { text: `Department: ${currentSelectedInfusion.value.department}`},
+  //     { text: `Floor: ${currentSelectedInfusion.value.floor}` },
+  //     { text: `Ward: ${currentSelectedInfusion.value.ward}` },
+  //     { text: `Bed: ${currentSelectedInfusion.value.bed}` },
+  //     { text: `Drug: ${currentSelectedInfusion.value.drug}` },
+  //     { text: `Total ml: ${currentSelectedInfusion.value.totalMl}` },
+  //     { text: `Remaining ml: ${currentSelectedInfusion.value.remainingMl}` },
+  //     { text: `ml per hour: ${currentSelectedInfusion.value.mlPerHour}` },
+  //     { text: `Time running: ${currentSelectedInfusion.value.timeRunning}` },
+  //     { text: `Time remaining: ${currentSelectedInfusion.value.timeRemaining}` },
+  //     { text: `ID: ${currentSelectedInfusion.value.id}` },
+  //     { text: `Software Version: ${currentSelectedInfusion.value.softwareVersion}` },
+  //     { text: `Medical Library Version: ${currentSelectedInfusion.value.medicalLibraryVersion}` }
+  //   ]
+  // }
+  let title= Date.now()
+  pdfMake.createPdf(infusionDoc).download(`${title}_infusion_details.pdf`)
 }
 
+function addToDownloadList(){
+  console.log(currentSelectedInfusion.value.id, 'added to download list')
+  pdfStore.addInfusion(currentSelectedInfusion.value)
+  findInfusionById(currentSelectedInfusion.value.id)
+  inBasket.value = true
+}
+
+function removeFromDownloadList(){
+  console.log(currentSelectedInfusion.value.id, 'removed from download list')
+  pdfStore.removeInfusion(currentSelectedInfusion.value)
+  findInfusionById(currentSelectedInfusion.value.id)
+  inBasket.value = false
+}
 
 const currentInfusions = ref([]) // ✅ ref makes it reactive
 
@@ -444,8 +498,8 @@ const toggleGroupItemClasses =
           {{ option }}
         </option>
       </select>
-      <div class="bg-green-600">{{pdfStore.getAmountOfPDF}}  amount selected</div>
-      <button class=" flex justify-center items-center bg-red-700 cursor-pointer hover:bg-red-500 hover:text-white rounded-2xl " @click="downloadPdf">Download PDF</button>
+      <div class="bg-green-600 hover:bg-green-400 mr-2 ml-2 rounded-2xl text-center flex justify-center text-white cursor-pointer">{{pdfStore.getAmountOfPDF}} infusions</div>
+      <button class=" flex justify-center items-center bg-red-700 cursor-pointer hover:bg-red-500 text-white rounded-2xl " @click="downloadPdf">Download PDF</button>
     </header>
     <section class="md:flex 4xl:h-[88.9vh] md:h-[85vh] dark:bg-black">
       <div
@@ -537,8 +591,11 @@ const toggleGroupItemClasses =
         >
           <RouterView />
         </div>
-        <div class="bg-gray-200 static flex-initial p-5 mt-2 h-[24vh] rounded-[1vw]" v-if="currentSelectedInfusion">
-          <button class=" flex justify-center items-center bg-blue-400 cursor-pointer hover:bg-blue-500 hover:text-white rounded-2xl w-44 h-44" @click="downloadPdf">Download PDF</button>
+        <div class="bg-gray-200 static flex-initial p-5 mt-2 h-[24vh] rounded-[1vw]" v-if="!inBasket">
+          <button class=" flex justify-center items-center bg-blue-400 cursor-pointer hover:bg-blue-500 hover:text-white rounded-2xl w-44 h-44" @click="addToDownloadList">add PDF to download list</button>
+        </div>
+        <div class="bg-gray-200 static flex-initial p-5 mt-2 h-[24vh] rounded-[1vw]" v-else>
+          <button class=" flex justify-center items-center bg-red-400 cursor-pointer hover:bg-red-500 hover:text-white rounded-2xl w-44 h-44" @click="removeFromDownloadList">remove PDF from download list</button>
         </div>
       </div>
     </section>
