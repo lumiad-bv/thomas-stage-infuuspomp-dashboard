@@ -6,8 +6,10 @@ import { provide, ref, watch, computed, onMounted } from 'vue'
 import { ToggleGroupItem, ToggleGroupRoot, Toggle } from 'radix-vue'
 import InfusionButtons from '@/components/InfusionButtons.vue'
 import { Icon } from '@iconify/vue'
-import { selectedButtoneStore } from '@/stores/selectedButtonStore.js'
-// import {infusionsForPdfStore} from '@/stores/infusionsForPdfStore.js'
+import { useSelectedButtonStore } from '@/stores/selectedButtonStore'
+const selectedButtoneStore = useSelectedButtonStore()
+import { useInfusionsForPdfStore } from '@/stores/infusionsForPdfStore'
+const pdfStore = useInfusionsForPdfStore()
 import StackButtons from '@/components/StackButtons.vue'
 const route = useRoute()
 // a test to see if pdfmake works in this application
@@ -127,8 +129,8 @@ provide('afdeling', afdeling)
 onMounted(() => {
   // Set the first default value from the list
   afdeling.value = options[0]
-  selectedButtoneStore.currentDepartment = 'All departments'
-  selectedButtoneStore.currentFloor = 'overview'
+  selectedButtoneStore.setCurrentDepartment('All departments')
+  selectedButtoneStore.setCurrentFloor('overview')
 })
 const sortChoice = ref(null)
 // a save location for the previous sorting choice to permit sorting in reverse
@@ -183,18 +185,18 @@ function filterWithPumpstacks(afdeling) {
 }
 
 function filterAllInfusionsNoMap(afdeling) {
-  selectedButtoneStore.currentDepartment = afdeling
+  selectedButtoneStore.setCurrentDepartment(afdeling)
   updateInfusions(filterWithPumpstacks(afdeling))
 }
 
 function returnToAllInfusions() {
   updateInfusions(PumpStackInfusions)
-  selectedButtoneStore.currentDepartment = 'All departments'
-  selectedButtoneStore.currentFloor = 'overview'
+  selectedButtoneStore.setCurrentDepartment('All departments')
+  selectedButtoneStore.setCurrentFloor('overview')
 }
 
 // Watchers to handle changes in afdeling and selectedButtoneStore
-watch(selectedButtoneStore.currentDepartment, (newAfdeling) => {
+watch(selectedButtoneStore.getCurrentDepartment, (newAfdeling) => {
   if (newAfdeling === 'All departments') {
     returnToAllInfusions()
     return
@@ -442,7 +444,7 @@ const toggleGroupItemClasses =
           {{ option }}
         </option>
       </select>
-      <div class="bg-green-600">amount selected</div>
+      <div class="bg-green-600">{{pdfStore.getAmountOfPDF}}  amount selected</div>
       <button class=" flex justify-center items-center bg-red-700 cursor-pointer hover:bg-red-500 hover:text-white rounded-2xl " @click="downloadPdf">Download PDF</button>
     </header>
     <section class="md:flex 4xl:h-[88.9vh] md:h-[85vh] dark:bg-black">
