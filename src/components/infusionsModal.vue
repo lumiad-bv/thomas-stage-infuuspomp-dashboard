@@ -61,13 +61,13 @@ function print() {
     <div class="bg-white shadow-2xl overflow-x-auto flex flex-col max-w-3xl w-full rounded-md">
       <!-- Header -->
       <header
-        class="flex justify-between items-center px-4 py-3 border-b border-gray-200 text-teal-600 font-semibold"
+        class="flex justify-between items-center px-4 py-3 border-b border-gray-200 text-blue-600 font-semibold"
       >
-        <slot name="header">Currently selected infusions</slot>
+        <slot name="header">{{infusionsForPdfStore.getAmountOfPDF}} infusions selected</slot>
         <button
           type="button"
           @click="close"
-          class="text-teal-600 font-bold text-xl p-2 hover:text-teal-800 transition"
+          class="text-blue-600 font-bold text-xl p-2 hover:text-blue-800 transition"
         >
           ×
         </button>
@@ -95,16 +95,16 @@ function print() {
 
       <!-- Body slot -->
       <section class="px-4 py-5 text-gray-700">
-        <slot name="body">This is the default body!</slot>
+        <slot name="body"></slot>
       </section>
 
       <!-- Footer -->
       <footer class="flex flex-col gap-2 px-4 py-4 border-t border-gray-200">
-        <slot name="footer">This is the default footer!</slot>
+        <slot name="footer"></slot>
 
         <button
           type="button"
-          class="text-white bg-[#4AAE9B] border border-[#4AAE9B] rounded px-4 py-2 hover:bg-teal-500 transition"
+          class="text-white bg-blue-600 border border-blue-600 rounded px-4 py-2 hover:bg-blue-500 transition"
           @click="print"
         >
           Print Infusion Details
@@ -115,7 +115,7 @@ function print() {
           class="text-white bg-[#ec1010] border border-[#ec1010] rounded px-4 py-2 hover:bg-red-500 transition"
           @click="close"
         >
-          Close Modal
+          Close
         </button>
       </footer>
     </div>
