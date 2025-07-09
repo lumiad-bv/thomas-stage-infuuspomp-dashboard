@@ -477,7 +477,7 @@ function reverse() {
   updateInfusions(currentInfusions.value.reverse())
 }
 const toggleGroupItemClasses =
-  'hover:bg-gray-200  data-[state=on]:bg-blue-500 data-[state=on]:text-white  flex h-[35px] xl:w-[20vw] md:w-[35vw] w-[30vw] items-center justify-center bg-white text-base leading-4 first:rounded-l last:rounded-r focus:z-10 focus:shadow-[0_0_0_2px] focus:shadow-black focus:outline-none dark:bg-gray-300  dark:border-gray-600 dark:hover:bg-gray-400 dark:data-[state=on]:bg-gray-400 '
+  'hover:bg-gray-200  data-[state=on]:bg-blue-500 data-[state=on]:text-white  flex h-[35px] xl:w-[20vw] md:w-[35vw] w-[30vw] items-center justify-center bg-white text-base leading-4 first:rounded-l  last:rounded-r focus:z-10 focus:shadow-[0_0_0_2px] focus:shadow-black focus:outline-none dark:bg-gray-300 border-1 border-gray-300 dark:border-gray-600 dark:hover:bg-gray-400 dark:data-[state=on]:bg-gray-400 '
 </script>
 
 <template>
@@ -489,14 +489,18 @@ const toggleGroupItemClasses =
         class="md:mr-[69vw] md:h-[2vw] md:visible invisible"
       />
       <h1
-        class="text-white font-script font-bold text-bold text-4xl left-[46vw] md:top-4 absolute md:mr-[28vw] mr-[4vw] md:visible invisible h-[3vw]"
+        class="text-white font-script font-bold text-bold text-4xl left-[23vw] md:top-8 w-[40vw] absolute md:mr-[24vw] mr-[4vw] md:visible invisible h-[3vw]"
       >
-        {{ afdeling }} , {{ amountOfInfusions }} infusions,
-        {{ amountOfInfusionsWithStacks }} Pumpstacks
+        {{ afdeling }}
+      </h1>
+      <h1
+        class="text-white font-script font-bold text-bold text-4xl left-[43vw] md:top-8 w-[40vw] absolute md:mr-[24vw] mr-[4vw] md:visible invisible h-[3vw]"
+      >
+        {{ amountOfInfusions }} infusions, {{ amountOfInfusionsWithStacks }} Pumpstacks
       </h1>
       <select
         v-model="afdeling"
-        class="md:flex md:static absolute top-3 left-18 w-[70vw] md:w-full md:h-[4vh] bg-gray-50 border border-gray-300 hover:bg-gray-100 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-300 dark:border-gray-600 dark:hover:bg-gray-400 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
+        class="md:flex md:static absolute top-3 left-18 w-[70vw] md:w-full md:h-[5vh] bg-gray-50 border border-gray-300 hover:bg-gray-100 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-300 dark:border-gray-600 dark:hover:bg-gray-400 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
       >
         <option
           v-for="(option, index) in options"
@@ -509,21 +513,21 @@ const toggleGroupItemClasses =
       </select>
 
       <div
-        class="bg-green-600 hover:bg-green-400 mr-2 ml-2 rounded-2xl text-center flex justify-center text-white cursor-pointer"
+        class="bg-green-600 hover:bg-green-400 w-[20vw] h-[5vh] mr-2 ml-2  items-center justify-center rounded-2xl  flex  text-white cursor-pointer"
         @click="showModal"
       >
-        {{ pdfStore.getAmountOfPDF }} infusions
+        {{ pdfStore.getAmountOfPDF }}
       </div>
       <button
-        class="flex justify-center items-center bg-red-700 cursor-pointer hover:bg-red-500 text-white rounded-2xl"
+        class="flex justify-center items-center w-[20vw] h-[5vh] bg-red-700 cursor-pointer   hover:bg-red-500 text-white rounded-2xl"
         @click="downloadPdf"
       >
-        Download PDF
+        to PDF
       </button>
     </header>
 
     <infusionsModal v-show="isModalVisible" @close="closeModal" />
-    <section class="md:flex 4xl:h-[88.9vh] md:h-[85vh] dark:bg-black">
+    <section class="  md:flex 4xl:h-[88.9vh] md:h-[85vh] dark:bg-black">
       <div
         class="w-[100vw] h-[90vh] m-3 xl:static bg-gray-200 dark:bg-gray-500 md:rounded-[1vw] rounded-[3vw] p-2 overflow-x-hidden"
       >

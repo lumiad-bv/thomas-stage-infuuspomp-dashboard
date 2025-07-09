@@ -57,10 +57,10 @@ const notifier = computed(() => {
 <template>
   <div>
     <button @click.stop="routeIt(props.id)" :class="notifier">
-      <div class="w-[12vw] truncate pl-2 text-ellipsis">
+      <div class="pr-10 left-0 truncate pl-2 text-ellipsis">
         pump {{ props.id }}
       </div>
-      <div class="w-[5vw] truncate pl-2 text-ellipsis">
+      <div class="w-[11vw] truncate pl-2 text-ellipsis">
         {{ props.department }}
       </div>
       <div class="w-[10vw] truncate pl-2 text-ellipsis">
