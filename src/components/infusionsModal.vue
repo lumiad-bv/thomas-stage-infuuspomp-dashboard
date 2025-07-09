@@ -6,7 +6,6 @@ import InfusionPrintButtons from '@/components/icons/infusionPrintButtons.vue'
 import { ref, watch } from 'vue'
 import { Icon } from '@iconify/vue'
 import { Toggle } from 'radix-vue'
-import PumpStackInfusions from '@/assets/generated_data_with_pumpstacks.json'
 
 const infusionsForPdfStore = useInfusionsForPdfStore()
 const infusions = infusionsForPdfStore.getInfusions
