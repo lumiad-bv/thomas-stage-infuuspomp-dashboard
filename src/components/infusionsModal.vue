@@ -59,8 +59,9 @@ watch(() => infusionsForPdfStore.getInfusions, reapply, { deep: true })
 watch(sortBy, reapply)
 watch(toggleState, reapply)
 
-function close() { defineEmits(['close'])('close') }
-
+function close() {
+  emit('close')
+}
 function print() {
   const infusionDoc = {
     content: [],
