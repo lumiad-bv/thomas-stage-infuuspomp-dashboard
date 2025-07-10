@@ -513,13 +513,13 @@ const toggleGroupItemClasses =
       </select>
 
       <div
-        class="bg-green-600 hover:bg-green-400 w-[20vw] h-[5vh] mr-2 ml-2  items-center justify-center rounded-2xl  flex  text-white cursor-pointer"
+        class="bg-green-600 hover:bg-green-400 w-[20vw] h-[5vh] mr-2 ml-2 items-center justify-center rounded-2xl flex text-white cursor-pointer"
         @click="showModal"
       >
         {{ pdfStore.getAmountOfPDF }}
       </div>
       <button
-        class="flex justify-center items-center w-[20vw] h-[5vh] bg-red-700 cursor-pointer   hover:bg-red-500 text-white rounded-2xl"
+        class="flex justify-center items-center w-[20vw] h-[5vh] bg-red-700 cursor-pointer hover:bg-red-500 text-white rounded-2xl"
         @click="downloadPdf"
       >
         to PDF
@@ -527,7 +527,7 @@ const toggleGroupItemClasses =
     </header>
 
     <infusionsModal v-show="isModalVisible" @close="closeModal" />
-    <section class="  md:flex 4xl:h-[88.9vh] md:h-[85vh] dark:bg-black">
+    <section class="md:flex 4xl:h-[88.9vh] md:h-[85vh] dark:bg-black">
       <div
         class="w-[100vw] h-[90vh] m-3 xl:static bg-gray-200 dark:bg-gray-500 md:rounded-[1vw] rounded-[3vw] p-2 overflow-x-hidden"
       >

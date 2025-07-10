@@ -27,11 +27,10 @@ function routeIt(infusionID) {
   route.push({ name: 'Infusion-details', params: { infusionId: infusionID } })
 }
 
-function removeFromPrint(){
-  console.log("removeFromPrint")
+function removeFromPrint() {
+  console.log('removeFromPrint')
   infusionsForPdfStore.removeInfusionById(props.id)
 }
-
 
 const notifier = computed(() => {
   if (props.id === selectedButtoneStore.getPressedButtonId) {
@@ -57,18 +56,20 @@ const notifier = computed(() => {
 <template>
   <div>
     <button @click.stop="routeIt(props.id)" :class="notifier">
-      <div class="pr-10 left-0 truncate pl-2 text-ellipsis">
-        pump {{ props.id }}
-      </div>
+      <div class="pr-10 left-0 truncate pl-2 text-ellipsis">pump {{ props.id }}</div>
       <div class="w-[11vw] truncate pl-2 text-ellipsis">
         {{ props.department }}
       </div>
       <div class="w-[10vw] truncate pl-2 text-ellipsis">
         {{ props.bed }}
       </div>
-      <div @click.stop="removeFromPrint" class="bg-red-600 hover:bg-red-500 w-[1vw]  text-center rounded-2xl border-2 border-gray-700">X</div>
+      <div
+        @click.stop="removeFromPrint"
+        class="bg-red-600 hover:bg-red-500 w-[1vw] text-center rounded-2xl border-2 border-gray-700"
+      >
+        X
+      </div>
     </button>
-
   </div>
 </template>
 

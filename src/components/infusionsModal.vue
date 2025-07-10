@@ -71,7 +71,6 @@ function sortInfusions(newSortChoice) {
       : regulars.slice().sort((a, b) => (a[key] > b[key] ? 1 : -1))
 
     updateInfusions([...sortedRegulars, ...stacks])
-
   }
 
   switch (newSortChoice) {
@@ -112,8 +111,6 @@ function sortInfusions(newSortChoice) {
     case 'softwareVersion':
       sortInfusionsBy('softwareVersion')
       return
-
-
   }
 }
 
@@ -178,7 +175,7 @@ watch(toggleState, () => {
       <header
         class="flex justify-between items-center px-4 py-3 border-b border-gray-200 text-blue-600 font-semibold"
       >
-        <slot name="header">{{infusionsForPdfStore.getAmountOfPDF}} infusions selected</slot>
+        <slot name="header">{{ infusionsForPdfStore.getAmountOfPDF }} infusions selected</slot>
         <button
           type="button"
           @click="close"
@@ -189,7 +186,11 @@ watch(toggleState, () => {
       </header>
 
       <!-- Infusion items -->
-      <div v-for="item in currentInfusions" :key="item.id || item.id_stack_number" class="mb-2 px-4">
+      <div
+        v-for="item in currentInfusions"
+        :key="item.id || item.id_stack_number"
+        class="mb-2 px-4"
+      >
         <InfusionPrintButtons
           v-if="!item.pumps"
           :department="item.department"
@@ -212,7 +213,7 @@ watch(toggleState, () => {
       <section class="px-4 py-5 text-gray-700 grid grid-cols-14">
         <slot name="body" class="">
           Sort by
-          <select v-model="sortBy"  class="border border-gray-300 rounded px-2 py-1 col-span-11">
+          <select v-model="sortBy" class="border border-gray-300 rounded px-2 py-1 col-span-11">
             <option value="department">Department</option>
             <option value="floor">Floor</option>
             <option value="ward">Ward</option>
@@ -234,7 +235,6 @@ watch(toggleState, () => {
             <Icon icon="radix-icons:caret-sort" class="color-black" />
           </Toggle>
         </slot>
-
       </section>
 
       <!-- Footer -->
