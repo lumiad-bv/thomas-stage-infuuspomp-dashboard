@@ -126,32 +126,38 @@ function print() {
   })
   console.log(sortBy.value)
   infusionDoc.content.push({ text: 'Here are the requested infusion details', fontSize: 18 })
+  const attributeLabels = {
+    department:             'Department:',
+    floor:                  'Floor:',
+    ward:                   'Ward:',
+    bed:                    'Bed:',
+    drug:                   'Drug:',
+    totalMl:                'Total ml:',
+    remainingMl:            'Remaining ml:',
+    time:                   'Time remaining:', // we'll read from timeRemaining
+    id:                     'ID:',
+    softwareVersion:        'Software Version:',
+    medicalLibraryVersion:  'Medical Library Version:'
+  };
   for (const item of currentInfusions.value) {
     console.log(item)
+    const body = [
+      ['Field', 'Value']
+    ];
+    for (const attr of selectedAttributes.value) {
+      if (item[attr] !== undefined) {
+        body.push([attributeLabels[attr], item[attr]]);
+      }
+    }
+    console.log(body)
     infusionDoc.content.push({
       layout: 'lightHorizontalLines',
       margin: [20, 10, 20, 10],
       table: {
         headerRows: 1,
         widths: ['*', '*'],
-        body: [
-          ['Field', 'Value'], // Header row
-
-          ['Department:', item.department],
-          ['Floor:', item.floor],
-          ['Ward:', item.ward],
-          ['Bed:', item.bed],
-          ['Drug:', item.drug],
-          ['Total ml:', item.totalMl],
-          ['Remaining ml:', item.remainingMl],
-          ['ml per hour:', item.mlPerHour],
-          ['Time running:', item.timeRunning],
-          ['Time remaining:', item.timeRemaining],
-          ['ID:', item.id],
-          ['Software Version:', item.softwareVersion],
-          ['Medical Library Version:', item.medicalLibraryVersion],
-        ],
-      },
+        body
+      }
     })
   }
   let title = Date.now()
@@ -159,6 +165,25 @@ function print() {
 }
 const toggleState = ref(false)
 const sortBy = ref('')
+
+// radio button attributes adn functions
+const attributes = [
+  { value: 'department',           label: 'Department' },
+  { value: 'floor',                label: 'Floor' },
+  { value: 'ward',                 label: 'Ward' },
+  { value: 'bed',                  label: 'Bed' },
+  { value: 'drug',                 label: 'Drug' },
+  { value: 'totalMl',              label: 'Total ml' },
+  { value: 'remainingMl',          label: 'Remaining ml' },
+  { value: 'time',                 label: 'Time remaining' },
+  { value: 'id',                   label: 'ID' },
+  { value: 'softwareVersion',      label: 'Software Version' },
+  { value: 'medicalLibraryVersion',label: 'Medical Library Version' }
+]
+
+const selectedAttributes = ref([])
+
+
 
 watch(sortBy, (newSortChoice) => {
   sortInfusions(newSortChoice)
@@ -183,6 +208,7 @@ watch(toggleState, () => {
         >
           ×
         </button>
+
       </header>
 
       <!-- Infusion items -->
@@ -234,6 +260,27 @@ watch(toggleState, () => {
           >
             <Icon icon="radix-icons:caret-sort" class="color-black" />
           </Toggle>
+
+          <fieldset class="p-1 bg-white rounded-lg shadow-sm col-span-12">
+            <legend class="mb-4">
+              Choose attributes
+            </legend>
+            <div class="grid grid-cols-2 auto-cols-auto grid-flow-row gap-x-3 ">
+              <label
+                v-for="opt in attributes"
+                :key="opt.value"
+                class="flex items-center space-x-2"
+              >
+                <input
+                  type="checkbox"
+                  v-model="selectedAttributes"
+                  :value="opt.value"
+                  class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-2 focus:ring-blue-400"
+                />
+                <span class="text-gray-800">{{ opt.label }}</span>
+              </label>
+            </div>
+          </fieldset>
         </slot>
       </section>
 
