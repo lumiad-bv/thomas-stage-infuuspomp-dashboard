@@ -7,112 +7,59 @@ import { ref, watch } from 'vue'
 import { Icon } from '@iconify/vue'
 import { Toggle } from 'radix-vue'
 
+// Setup PDF store and fonts
 const infusionsForPdfStore = useInfusionsForPdfStore()
-const infusions = infusionsForPdfStore.getInfusions
-const emit = defineEmits(['close'])
 pdfMake.vfs = pdfFonts.default.vfs
+
+// Reactive state
 const currentInfusions = ref([])
-function close() {
-  emit('close')
-}
-function calculatePercentage(infusion) {
-  return parseFloat(((infusion.remainingMl / infusion.totalMl) * 100).toFixed(1))
-}
+const sortBy = ref('')
+const toggleState = ref(false)
 
-//function to show remaining time of infusion
-function timeToSeconds(time) {
-  // Ensure the time has a valid format like HH:SS
-  const [hours, seconds] = time.split(':').map(Number)
-
-  // Calculate the total time in minutes (convert to seconds if needed)
-  return hours * 60 + seconds // Convert to total minutes (HH treated as minutes)
-}
-function updateInfusions(newInfusions) {
-  currentInfusions.value = newInfusions // ✅ assign to .value!
-}
-updateInfusions(infusions)
-function reverse() {
-  updateInfusions(currentInfusions.value.reverse())
-}
-function sortInfusions(newSortChoice) {
-  function sortPumpsArray(pumps, key, customSortFn = null) {
-    return pumps.slice().sort((a, b) => {
-      if (customSortFn) return customSortFn(a, b)
-      return a[key] > b[key] ? 1 : -1
-    })
+// Pure sorting helper
+function sortInfusionsPure(list, choice) {
+  const clone = list.slice()
+  function sortPumps(pumps, key, cmp) {
+    return pumps.slice().sort((a,b) => cmp ? cmp(a,b) : (a[key]>b[key]?1:-1))
   }
+  function calcPct(a){return parseFloat(((a.remainingMl/a.totalMl)*100).toFixed(1))}
+  function toSec(t){ const [h,s]=t.split(':').map(Number);return h*60+s }
+  function calcTime(a){ const t=a.timeRemaining==='Infusion not running'?'9999:59':a.timeRemaining; return toSec(t.length<5?`0${t}`:t) }
 
-  function calculateTimeValue(infusion) {
-    const time =
-      infusion.timeRemaining === 'Infusion not running' ? '9999:59' : infusion.timeRemaining
-    const normalized = time.length < 5 ? `0${time}` : time
-    return timeToSeconds(normalized)
+  // sort each item's pumps
+  const withPumpsSorted = clone.map(item => item.pumps
+    ? { ...item, pumps: sortPumps(item.pumps, choice, choice==='remainingMl'? (a,b)=>calcPct(a)-calcPct(b) : choice==='time'? (a,b)=>calcTime(a)-calcTime(b) : null ) }
+    : item
+  )
+  // separate
+  const regs = withPumpsSorted.filter(i=>!i.pumps)
+  const stacks = withPumpsSorted.filter(i=>i.pumps)
+  let sortedRegs
+  switch(choice) {
+    case 'remainingMl':   sortedRegs = regs.slice().sort((a,b)=>calcPct(a)-calcPct(b)); break
+    case 'time':          sortedRegs = regs.slice().sort((a,b)=>calcTime(a)-calcTime(b)); break
+    default:              sortedRegs = regs.slice().sort((a,b)=>a[choice]>b[choice]?1:-1)
   }
-
-  function sortInfusionsBy(key, compareFn = null) {
-    updateInfusions(
-      currentInfusions.value.map((item) => {
-        if (item.pumps) {
-          return {
-            ...item,
-            pumps: sortPumpsArray(item.pumps, key, compareFn),
-          }
-        } else {
-          return item
-        }
-      }),
-    )
-
-    const regulars = currentInfusions.value.filter((i) => !i.pumps)
-    const stacks = currentInfusions.value.filter((i) => i.pumps)
-
-    const sortedRegulars = compareFn
-      ? regulars.slice().sort(compareFn)
-      : regulars.slice().sort((a, b) => (a[key] > b[key] ? 1 : -1))
-
-    updateInfusions([...sortedRegulars, ...stacks])
-  }
-
-  switch (newSortChoice) {
-    case 'remainingMl':
-      sortInfusionsBy(null, (a, b) => calculatePercentage(a) - calculatePercentage(b))
-      return
-
-    case 'time':
-      sortInfusionsBy(null, (a, b) => calculateTimeValue(a) - calculateTimeValue(b))
-      return
-
-    case 'department':
-      sortInfusionsBy('department')
-      return
-    case 'floor':
-      sortInfusionsBy('floor')
-      return
-    case 'ward':
-      sortInfusionsBy('ward')
-      return
-    case 'bed':
-      sortInfusionsBy('bed')
-      return
-
-    case 'drug':
-      sortInfusionsBy('drug')
-      return
-    case 'totalMl':
-      sortInfusionsBy('totalMl')
-      return
-    case 'id':
-      sortInfusionsBy('id')
-      return
-    case 'medicalLibraryVersion':
-      sortInfusionsBy('medicalLibraryVersion')
-      return
-
-    case 'softwareVersion':
-      sortInfusionsBy('softwareVersion')
-      return
-  }
+  return [...sortedRegs, ...stacks]
 }
+
+// Apply store + sort + reverse
+function reapply() {
+  let list = infusionsForPdfStore.getInfusions.slice()
+  if (sortBy.value) list = sortInfusionsPure(list, sortBy.value)
+  if (toggleState.value) list = list.slice().reverse()
+  currentInfusions.value = list
+}
+
+// Initial load
+reapply()
+
+// Watchers
+watch(() => infusionsForPdfStore.getInfusions, reapply, { deep: true })
+watch(sortBy, reapply)
+watch(toggleState, reapply)
+
+function close() { defineEmits(['close'])('close') }
 
 function print() {
   const infusionDoc = {
@@ -196,8 +143,6 @@ function print() {
   let title = Date.now()
   pdfMake.createPdf(infusionDoc).download(`${title}_infusion_details.pdf`)
 }
-const toggleState = ref(false)
-const sortBy = ref('')
 
 // radio button attributes adn functions
 const attributes = [
@@ -218,12 +163,6 @@ const selectedAttributes = ref([])
 
 
 
-watch(sortBy, (newSortChoice) => {
-  sortInfusions(newSortChoice)
-})
-watch(toggleState, () => {
-  reverse()
-})
 </script>
 
 <template>
