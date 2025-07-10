@@ -2,7 +2,7 @@
 import pdfMake from 'pdfmake/build/pdfmake'
 import * as pdfFonts from 'pdfmake/build/vfs_fonts'
 import { useInfusionsForPdfStore } from '@/stores/infusionsForPdfStore.js'
-import InfusionPrintButtons from '@/components/icons/infusionPrintButtons.vue'
+import InfusionPrintButtons from '@/components/infusionPrintButtons.vue'
 import { ref, watch } from 'vue'
 import { Icon } from '@iconify/vue'
 import { Toggle } from 'radix-vue'
@@ -195,7 +195,7 @@ watch(toggleState, () => {
 
 <template>
   <div class="fixed inset-0 bg-black/70 flex justify-center items-center z-50">
-    <div class="bg-white shadow-2xl overflow-x-auto flex flex-col max-w-3xl w-full rounded-md">
+    <div class="bg-white shadow-2xl overflow-x-auto flex flex-col max-w-3xl w-full rounded-md h-[90vh] ">
       <!-- Header -->
       <header
         class="flex justify-between items-center px-4 py-3 border-b border-gray-200 text-blue-600 font-semibold"
@@ -211,11 +211,13 @@ watch(toggleState, () => {
 
       </header>
 
-      <!-- Infusion items -->
+      <!-- Infusion items --><div
+      class="4xl:m-2 md:m-1 m-1 4xl:h-[80vh] xl:h-[70vh] md:h-[70.2vh] h-[71.3vh]  border-1 border-b-gray-600 overflow-auto"
+    >
       <div
         v-for="item in currentInfusions"
         :key="item.id || item.id_stack_number"
-        class="mb-2 px-4"
+        class="mb-2 px-4 "
       >
         <InfusionPrintButtons
           v-if="!item.pumps"
@@ -234,6 +236,8 @@ watch(toggleState, () => {
           :medicalLibraryVersion="item.medicalLibraryVersion"
         />
       </div>
+    </div>
+
 
       <!-- Body slot -->
       <section class="px-4 py-5 text-gray-700 grid grid-cols-14">
