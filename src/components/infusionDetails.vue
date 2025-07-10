@@ -10,20 +10,19 @@ const percentageForBar = ref(null)
 const allInfusions = PumpStackInfusions
 const route = useRoute() // Get the current route to access the params
 
-
 function findInfusionById(id) {
   for (const item of allInfusions) {
     // Regular infusion
-    if (item.id === id) infusion.value = item;
+    if (item.id === id) infusion.value = item
 
     // Pumpstack
     if (Array.isArray(item.pumps)) {
-      const found = item.pumps.find(pump => pump.id === id);
-      if (found) infusion.value = found;
+      const found = item.pumps.find((pump) => pump.id === id)
+      if (found) infusion.value = found
     }
   }
 
-  return null; // Not found
+  return null // Not found
 }
 // Fetch the infusion based on the ID
 // const fetchItem = (id) => {
@@ -70,31 +69,59 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="grid 4XL:grid-cols-5 xl:grid-cols-4 grid-cols-1 static">
-    <div class="xl:col-span-3 grid xl:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-2" v-if="infusion">
+  <div class="grid grid-cols-1 static">
+    <div class="xl:col-span-3 grid grid-cols-1 gap-2" v-if="infusion">
+      <div class="text-center grid grid-cols-2 relative">
+        <div class="bg-blue-500 text-white rounded-full m-1 p-1">department</div>
+        <div class="bg-gray-300 rounded-full m-1 p-1">{{ infusion.department }}</div>
+      </div>
+      <div class="text-center grid grid-cols-2 relative">
+        <div class="bg-blue-500 text-white rounded-full m-1 p-1">floor</div>
+        <div class="bg-gray-300 rounded-full m-1 p-1">{{ infusion.floor }}</div>
+      </div>
       <div class="text-center grid grid-cols-2 relative">
         <div class="bg-blue-500 text-white rounded-full m-1 p-1">ward</div>
         <div class="bg-gray-300 rounded-full m-1 p-1">{{ infusion.ward }}</div>
       </div>
       <div class="text-center grid grid-cols-2 relative">
-        <div class="bg-blue-500 text-white rounded-full m-1 p-1">ml/hour:</div>
-        <div class="bg-gray-300 rounded-full m-1 p-1">{{ infusion.mlPerHour }}</div>
-      </div>
-      <div class="text-center grid grid-cols-2 relative">
-        <div class="bg-blue-500 text-white rounded-full m-1 p-1">totalMl:</div>
-        <div class="bg-gray-300 rounded-full m-1 p-1">{{ infusion.totalMl }}</div>
-      </div>
-      <div class="text-center grid grid-cols-2 relative">
-        <div class="bg-blue-500 text-white rounded-full m-1 p-1">bed:</div>
+        <div class="bg-blue-500 text-white rounded-full m-1 p-1">bed</div>
         <div class="bg-gray-300 rounded-full m-1 p-1">{{ infusion.bed }}</div>
       </div>
       <div class="text-center grid grid-cols-2 relative">
-        <div class="bg-blue-500 text-white rounded-full m-1 p-1">drug:</div>
+        <div class="bg-blue-500 text-white rounded-full m-1 p-1">drug</div>
         <div class="bg-gray-300 rounded-full m-1 p-1">{{ infusion.drug }}</div>
       </div>
       <div class="text-center grid grid-cols-2 relative">
-        <div class="bg-blue-500 text-white rounded-full m-1 p-1">remainingMl:</div>
+        <div class="bg-blue-500 text-white rounded-full m-1 p-1">totalMl</div>
+        <div class="bg-gray-300 rounded-full m-1 p-1">{{ infusion.totalMl }}</div>
+      </div>
+      <div class="text-center grid grid-cols-2 relative">
+        <div class="bg-blue-500 text-white rounded-full m-1 p-1">remainingMl</div>
         <div class="bg-gray-300 rounded-full m-1 p-1">{{ infusion.remainingMl }}</div>
+      </div>
+      <div class="text-center grid grid-cols-2 relative">
+        <div class="bg-blue-500 text-white rounded-full m-1 p-1">mlPerHour</div>
+        <div class="bg-gray-300 rounded-full m-1 p-1">{{ infusion.mlPerHour }}</div>
+      </div>
+      <div class="text-center grid grid-cols-2 relative">
+        <div class="bg-blue-500 text-white rounded-full m-1 p-1">timeRunning</div>
+        <div class="bg-gray-300 rounded-full m-1 p-1">{{ infusion.timeRunning }}</div>
+      </div>
+      <div class="text-center grid grid-cols-2 relative">
+        <div class="bg-blue-500 text-white rounded-full m-1 p-1">timeRemaining</div>
+        <div class="bg-gray-300 rounded-full m-1 p-1">{{ infusion.timeRemaining }}</div>
+      </div>
+      <div class="text-center grid grid-cols-2 relative">
+        <div class="bg-blue-500 text-white rounded-full m-1 p-1">id</div>
+        <div class="bg-gray-300 rounded-full m-1 p-1">{{ infusion.id }}</div>
+      </div>
+      <div class="text-center grid grid-cols-2 relative">
+        <div class="bg-blue-500 text-white rounded-full m-1 p-1">softwareVersion</div>
+        <div class="bg-gray-300 rounded-full m-1 p-1">{{ infusion.softwareVersion }}</div>
+      </div>
+      <div class="text-center grid grid-cols-2 relative">
+        <div class="bg-blue-500 text-white rounded-full m-1 p-1">medicalLibraryVersion</div>
+        <div class="bg-gray-300 rounded-full m-1 p-1">{{ infusion.medicalLibraryVersion }}</div>
       </div>
     </div>
     <div class="pl-4 m-4" v-if="percentageForBar">
