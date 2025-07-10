@@ -144,6 +144,36 @@ function print() {
     const body = [
       ['Field', 'Value']
     ];
+    if (selectedAttributes === undefined || selectedAttributes.value.length === 0) {
+      infusionDoc.content.push({
+        layout: 'lightHorizontalLines',
+        margin: [20, 10, 20, 10],
+        table: {
+          headerRows: 1,
+          widths: ['*', '*'],
+          body: [
+            ['Field', 'Value'], // Header row
+
+            ['Department:', item.department],
+            ['Floor:', item.floor],
+            ['Ward:', item.ward],
+            ['Bed:', item.bed],
+            ['Drug:', item.drug],
+            ['Total ml:', item.totalMl],
+            ['Remaining ml:', item.remainingMl],
+            ['ml per hour:', item.mlPerHour],
+            ['Time running:', item.timeRunning],
+            ['Time remaining:', item.timeRemaining],
+            ['ID:', item.id],
+            ['Software Version:', item.softwareVersion],
+            ['Medical Library Version:', item.medicalLibraryVersion],
+          ],
+        },
+      })
+      let title = Date.now()
+      pdfMake.createPdf(infusionDoc).download(`${title}_infusion_details.pdf`)
+      return
+    }
     for (const attr of selectedAttributes.value) {
       if (item[attr] !== undefined) {
         body.push([attributeLabels[attr], item[attr]]);
