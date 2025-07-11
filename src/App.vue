@@ -1,4 +1,5 @@
 <script setup>
+import axios from 'axios'
 import { RouterView, useRoute } from 'vue-router'
 // import AllInfusions from '@/assets/generated_data_unique_with_time.json'
 import PumpStackInfusions from '@/assets/generated_data_with_pumpstacks.json'
@@ -478,6 +479,25 @@ function reverse() {
 }
 const toggleGroupItemClasses =
   'hover:bg-gray-200  data-[state=on]:bg-blue-500 data-[state=on]:text-white  flex h-[35px] xl:w-[20vw] md:w-[35vw] w-[30vw] items-center justify-center bg-white text-base leading-4 first:rounded-l  last:rounded-r focus:z-10 focus:shadow-[0_0_0_2px] focus:shadow-black focus:outline-none dark:bg-gray-300 border-1 border-gray-300 dark:border-gray-600 dark:hover:bg-gray-400 dark:data-[state=on]:bg-gray-400 '
+
+
+
+const axiosInfusionPumps = ref([])
+
+const fetchInfusionPumps = async () => {
+  try {
+    const res = await axios.get('/api/infusionpumps')
+    axiosInfusionPumps.value = res.data
+    console.log(res.data)
+  } catch (error) {
+    console.error('Fout bij ophalen infusionpumps:', error)
+  }
+}
+
+onMounted(() => {
+  fetchInfusionPumps()
+})
+console.log(axiosInfusionPumps)
 </script>
 
 <template>
