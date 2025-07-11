@@ -36,19 +36,19 @@ function selectForPrint() {
 }
 const selected = computed(() => {
   return infusionsForPdfStore.containsId(props.id)
-    ? 'w-[1vw] rounded-2xl bg-green-500 truncate rounded-full pl-2 text-ellipsis text-white border-2 border-gray-700'
-    : 'w-[1vw] rounded-2xl bg-gray-500 truncate rounded-full pl-2 text-ellipsis text-white border-2 border-gray-700'
+    ? 'w-[4vw] content-center  rounded-2xl bg-green-500 hover:bg-green-400 truncate rounded-full pl-2 text-ellipsis text-white border-2 border-gray-700'
+    : 'w-[4vw] content-center text-gray-500 hover:text-gray-400 rounded-2xl bg-gray-500 hover:bg-gray-400 truncate rounded-full pl-2 text-ellipsis  border-2 border-gray-700'
 })
 const backgroundClass = computed(() => {
   switch (true) {
     case remainingPercentage.value > 80:
-      return 'mr-2 4xl:w-[2.5VW] md:w-[7VW] w-[17vw] ml-1 bg-green-500 rounded-2xl pr-2 pl-2 text-center text-white' // Green for status > 80
+      return 'mr-2 4xl:w-[5VW] md:w-[15VW] w-[17vw] ml-1 bg-green-500 rounded-2xl pr-2 pl-2 text-center text-white' // Green for status > 80
     case remainingPercentage.value > 40:
-      return 'mr-2 4xl:w-[2.5VW] md:w-[7VW] w-[17vw] ml-1 bg-yellow-500 rounded-2xl pr-2 pl-2 text-center text-white' // Yellow for status > 40
+      return 'mr-2 4xl:w-[5VW] md:w-[15VW] w-[17vw] ml-1 bg-yellow-500 rounded-2xl pr-2 pl-2 text-center text-white' // Yellow for status > 40
     case remainingPercentage.value > 20:
-      return 'mr-2 4xl:w-[2.5VW] md:w-[7VW] w-[17vw] ml-1 bg-orange-500 rounded-2xl pr-2 pl-2 text-center text-white' // Orange for status > 20
+      return 'mr-2 4xl:w-[5VW] md:w-[15VW] w-[17vw] ml-1 bg-orange-500 rounded-2xl pr-2 pl-2 text-center text-white' // Orange for status > 20
     default:
-      return 'mr-2 4xl:w-[2.5VW] md:w-[7VW] w-[17vw] ml-1 bg-red-500 rounded-2xl pr-2 pl-2 text-center text-white' // Red for status <= 20
+      return 'mr-2 4xl:w-[5VW] md:w-[15VW] w-[17vw] ml-1 bg-red-500 rounded-2xl pr-2 pl-2 text-center text-white' // Red for status <= 20
   }
 })
 
@@ -86,7 +86,7 @@ const notifier = computed(() => {
       <div class="w-[25vw] truncate pl-2 text-ellipsis">
         {{ props.bed }}
       </div>
-      <div @click.stop="selectForPrint" :class="selected"></div>
+      <div @click.stop="selectForPrint" :class="selected">Print</div>
     </button>
   </div>
 </template>
