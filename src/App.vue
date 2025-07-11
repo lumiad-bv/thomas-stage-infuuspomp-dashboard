@@ -615,28 +615,7 @@ const toggleGroupItemClasses =
         >
           <RouterView />
         </div>
-        <div
-          class="bg-gray-200 static flex-initial p-5 mt-2 h-[24vh] rounded-[1vw] content-center"
-          v-if="!inBasket"
-        >
-          <button
-            class="flex justify-center items-center bg-blue-400 cursor-pointer hover:bg-blue-500 hover:text-white rounded-2xl w-44 h-44"
-            @click="addToDownloadList"
-          >
-            add PDF to download list
-          </button>
-        </div>
-        <div
-          class="bg-gray-200 static flex-initial p-5 mt-2 h-[24vh] rounded-[1vw] content-center"
-          v-else
-        >
-          <button
-            class="flex justify-center items-center bg-red-400 cursor-pointer hover:bg-red-500 hover:text-white rounded-2xl w-44 h-44"
-            @click="removeFromDownloadList"
-          >
-            remove PDF from download list
-          </button>
-        </div>
+
       </div>
     </section>
   </body>
