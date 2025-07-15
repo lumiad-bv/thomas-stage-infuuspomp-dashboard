@@ -533,17 +533,12 @@ console.log(axiosInfusionPumps)
       </select>
 
       <div
-        class="bg-green-600 hover:bg-green-400 w-[20vw] h-[5vh] mr-2 ml-2 items-center justify-center rounded-2xl flex text-white cursor-pointer"
+        class="bg-green-600 hover:bg-green-400 w-[40vw] h-[5vh] mr-2 ml-2 items-center justify-center rounded-2xl flex text-white cursor-pointer"
         @click="showModal"
       >
-        {{ pdfStore.getAmountOfPDF }}
+        export {{ pdfStore.getAmountOfPDF }} infusion(s)
       </div>
-      <button
-        class="flex justify-center items-center w-[20vw] h-[5vh] bg-red-700 cursor-pointer hover:bg-red-500 text-white rounded-2xl"
-        @click="downloadPdf"
-      >
-        to PDF
-      </button>
+
     </header>
 
     <infusionsModal v-show="isModalVisible" @close="closeModal" />
