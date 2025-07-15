@@ -32,6 +32,7 @@ function showModal() {
 function closeModal() {
   isModalVisible.value = false
 }
+
 watch(
   () => pdfStore.infusions, // this is reactive
   (newInfusions) => {
@@ -133,7 +134,13 @@ function removeFromDownloadList() {
 }
 
 const currentInfusions = ref([]) // ✅ ref makes it reactive
-
+const infusionsOneOrMore = computed(() => {
+  if (pdfStore.getAmountOfPDF === 1) {
+    return 'infusion'
+  } else {
+    return 'infusions'
+  }
+})
 const amountOfInfusions = computed(() =>
   currentInfusions.value.reduce((total, item) => {
     if (Array.isArray(item.pumps)) {
@@ -536,7 +543,7 @@ console.log(axiosInfusionPumps)
         class="bg-green-600 hover:bg-green-400 w-[40vw] h-[5vh] mr-2 ml-2 items-center justify-center rounded-2xl flex text-white cursor-pointer"
         @click="showModal"
       >
-        export {{ pdfStore.getAmountOfPDF }} infusion(s)
+        export {{ pdfStore.getAmountOfPDF }} {{infusionsOneOrMore}}
       </div>
 
     </header>
