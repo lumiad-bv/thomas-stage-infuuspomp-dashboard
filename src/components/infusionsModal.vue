@@ -6,6 +6,8 @@ import InfusionPrintButtons from '@/components/infusionPrintButtons.vue'
 import { ref, watch } from 'vue'
 import { Icon } from '@iconify/vue'
 import { Toggle } from 'radix-vue'
+import zipcelx from 'zipcelx';
+
 
 // Setup PDF store and fonts
 const infusionStore = useInfusionsForPdfStore()
@@ -14,7 +16,9 @@ pdfMake.vfs = pdfFonts.default.vfs
 // Reactive state for displayed infusions and UI controls
 const displayedInfusions = ref([])
 const selectedSortKey = ref('')
+const selectedPDF = ref(true)
 const isReverseOrder = ref(false)
+watch(selectedPDF.value, (value) => {console.log(value)})
 
 /**
  * Returns a new array of infusions sorted by the given key or custom comparator.
@@ -25,11 +29,6 @@ function getSortedInfusions(infusionArray, sortKey) {
   // Helper: sort pumps within a stack
   function sortPumpStacks(pumps, key, compareFn = null) {
     return pumps.slice().sort((a, b) => (compareFn ? compareFn(a, b) : a[key] > b[key] ? 1 : -1))
-  }
-
-  // Calculate the remaining percentage for sort by remainingMl
-  function calculateRemainingPercentage(infusion) {
-    return parseFloat(((infusion.remainingMl / infusion.totalMl) * 100).toFixed(1))
   }
 
   // Parse "HH:MM" into total seconds
@@ -49,10 +48,7 @@ function getSortedInfusions(infusionArray, sortKey) {
   // First, sort nested pump stacks if present
   const withSortedPumps = cloneArray.map((item) => {
     if (item.pumps) {
-      const comparator =
-        sortKey === 'remainingMl'
-          ? (a, b) => calculateRemainingPercentage(a) - calculateRemainingPercentage(b)
-          : sortKey === 'time'
+      const comparator =sortKey === 'time'
             ? (a, b) => calculateTimeRemainingSeconds(a) - calculateTimeRemainingSeconds(b)
             : null
       return { ...item, pumps: sortPumpStacks(item.pumps, sortKey, comparator) }
@@ -67,11 +63,6 @@ function getSortedInfusions(infusionArray, sortKey) {
   // Sort regular infusions by key or comparator
   let sortedRegularInfusions
   switch (sortKey) {
-    case 'remainingMl':
-      sortedRegularInfusions = regularInfusions
-        .slice()
-        .sort((a, b) => calculateRemainingPercentage(a) - calculateRemainingPercentage(b))
-      break
     case 'time':
       sortedRegularInfusions = regularInfusions
         .slice()
@@ -113,6 +104,67 @@ const emit = defineEmits(['close'])
 function closeModal() {
   emit('close')
 }
+function exportInfusionDetailsExcel(){
+
+  const config = {
+    filename: `${Date.now()}_work_order`,
+    sheet: {
+      data: []
+    }
+  };
+
+  const dataSet = config.sheet.data;
+
+// Attribute configuration
+  const attributeConfig = {
+    id:                    { label: 'ID',                  get: i => i.id },
+    department:            { label: 'Department',          get: i => i.department },
+    floor:                 { label: 'Floor',               get: i => i.floor },
+    ward:                  { label: 'Ward',                get: i => i.ward },
+    bed:                   { label: 'Bed',                 get: i => i.bed },
+    drug:                  { label: 'Drug',                get: i => i.drug },
+    totalMl:               { label: 'Total ml',            get: i => i.totalMl },
+    remainingMl:           { label: 'Remaining ml',        get: i => i.remainingMl },
+    mlPerHour:             { label: 'Flow rate (ml/hr)',   get: i => i.mlPerHour },
+    timeRunning:           { label: 'Time running',        get: i => i.timeRunning },
+    time:                  { label: 'Time remaining',      get: i => i.timeRemaining },
+    softwareVersion:       { label: 'SW Version',          get: i => i.softwareVersion },
+    medicalLibraryVersion: { label: 'Med. Library Ver.',   get: i => i.medicalLibraryVersion }
+  };
+
+// Determine which attributes to include
+  const keysToShow = selectedAttributes.value.length
+    ? selectedAttributes.value
+    : Object.keys(attributeConfig);
+
+// Add header row
+  const headerRow = keysToShow.map(key => ({
+    value: attributeConfig[key]?.label || key,
+    type: "string"
+  }));
+  dataSet.push(headerRow);
+
+// Add infusion rows
+  displayedInfusions.value.forEach(infusion => {
+    const row = keysToShow.map(key => {
+      const value = attributeConfig[key]?.get(infusion);
+      return {
+        value,
+        type: typeof value === "number" ? "number" : "string"
+      };
+    });
+    dataSet.push(row);
+  });
+
+// Export to Excel
+  zipcelx(config);
+
+
+
+}
+
+
+
 function printInfusionDetails() {
   const doc = {
     content: []
@@ -323,12 +375,23 @@ const selectedAttributes = ref([])
       <footer class="flex flex-col gap-2 px-4 py-4 border-t border-gray-200">
         <slot name="footer"></slot>
 
+        <select
+          v-model="selectedPDF"
+          class="border border-gray-300 rounded px-2 py-1 col-span-11"
+        >
+          <option :value="true">export to pdf</option>
+          <option :value="false">export to excel</option>
+        </select>
+
+        <p>Selected: {{ selectedPDF }}</p>
+
+
         <button
           type="button"
           class="text-white bg-blue-600 border border-blue-600 rounded px-4 py-2 hover:bg-blue-500 transition cursor-pointer"
-          @click="printInfusionDetails"
+          @click="selectedPDF ? printInfusionDetails() : exportInfusionDetailsExcel()"
         >
-          Print Infusion Details
+          Export Infusion Details
         </button>
 
         <button
