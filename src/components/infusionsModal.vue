@@ -31,11 +31,6 @@ function getSortedInfusions(infusionArray, sortKey) {
     return pumps.slice().sort((a, b) => (compareFn ? compareFn(a, b) : a[key] > b[key] ? 1 : -1))
   }
 
-  // Calculate the remaining percentage for sort by remainingMl
-  function calculateRemainingPercentage(infusion) {
-    return parseFloat(((infusion.remainingMl / infusion.totalMl) * 100).toFixed(1))
-  }
-
   // Parse "HH:MM" into total seconds
   function parseTimeToSeconds(timeString) {
     const [hours, minutes] = timeString.split(':').map(Number)
