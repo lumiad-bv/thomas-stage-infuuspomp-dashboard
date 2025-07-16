@@ -540,7 +540,7 @@ console.log(axiosInfusionPumps)
       </select>
 
       <div
-        class="bg-green-600 hover:bg-green-400 w-[40vw] h-[5vh] mr-2 ml-2 items-center justify-center rounded-2xl flex text-white cursor-pointer"
+        class="bg-green-600 hover:bg-green-400 w-[50vw] h-[5vh] mr-2 ml-2 items-center justify-center rounded-2xl flex text-white cursor-pointer text-center"
         @click="showModal"
       >
         export {{ pdfStore.getAmountOfPDF }} {{infusionsOneOrMore}}
@@ -633,7 +633,7 @@ console.log(axiosInfusionPumps)
       >
         <div
           id="infuusDetails"
-          class="bg-gray-200 xl:static h-[65vh] flex-initial overflow-hidden rounded-[1vw] p-5 font-[Open_Sans] text-2xl text-ellipsis [&::-webkit-scrollbar]:[width:10px] [&::-webkit-scrollbar]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-400"
+          class="bg-gray-200 xl:static  flex-initial overflow-hidden rounded-[1vw] p-5 font-[Open_Sans] text-2xl text-ellipsis [&::-webkit-scrollbar]:[width:10px] [&::-webkit-scrollbar]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-400"
         >
           <RouterView />
         </div>

@@ -70,7 +70,7 @@ onMounted(() => {
 
 <template>
   <div class="grid grid-cols-1 static">
-    <div class="xl:col-span-3 grid grid-cols-1 gap-2" v-if="infusion">
+    <div class="xl:col-span-3 grid grid-cols-2 gap-2" v-if="infusion">
       <div class="text-center grid grid-cols-2 relative">
         <div class="bg-blue-500 text-white rounded-full m-1 p-1">department</div>
         <div class="bg-gray-300 rounded-full m-1 p-1">{{ infusion.department }}</div>
