@@ -653,7 +653,7 @@ console.log(axiosInfusionPumps)
             />
           </div>
         </div>
-        <div class=" w-[78vw] col-span-7 xl:w-full bg-gray-50 border border-gray-300  md:rounded-[1vw] rounded-[3vw] text-center">
+        <div class=" w-[78vw] col-span-7 xl:w-full bg-blue-500 text-white border border-gray-300  md:rounded-[1vw] rounded-[3vw] text-center">
           Showing: {{afdeling}}        {{ amountOfInfusions }} infusions, {{ amountOfInfusionsWithStacks }} Pumpstacks
         </div>
       </div>

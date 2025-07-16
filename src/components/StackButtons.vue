@@ -35,7 +35,7 @@ function routeIt(stackId) {
 
 const backgroundColour = computed(() => {
   if (props.id_stack_number === selectedButtoneStore.getPressedButtonId) {
-    return '4xl:w-[46VW] xl:w-[46.5VW] md:w-[50.5VW] w-[87vw] border border-gray-500 rounded-xl bg-blue-600 shadow hover:bg-blue-500 text-white cursor-pointer'
+    return '4xl:w-[46VW] xl:w-[46.5VW] md:w-[50.5VW] w-[87vw] border border-gray-500 rounded-xl bg-blue-500 shadow hover:bg-blue-400 text-white cursor-pointer'
   }
   return '4xl:w-[46VW] xl:w-[46.5VW] md:w-[50.5VW] w-[87vw] border border-gray-500 rounded-xl bg-white shadow hover:bg-blue-500 hover:text-white cursor-pointer'
 })
