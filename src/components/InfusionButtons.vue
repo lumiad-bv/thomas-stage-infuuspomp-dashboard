@@ -84,7 +84,7 @@ const notifier = computed(() => {
         {{ props.department }}
       </div>
       <div class="w-[25vw] truncate pl-2 text-ellipsis">
-        {{ props.bed }}
+        {{ props.id }}
       </div>
       <div @click.stop="selectForPrint" :class="selected">Print</div>
     </button>

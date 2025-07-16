@@ -500,6 +500,34 @@ const fetchInfusionPumps = async () => {
     console.error('Fout bij ophalen infusionpumps:', error)
   }
 }
+const searchId = ref('')
+watch(searchId, (newSearchId) => {
+  if (newSearchId) {
+    const filteredInfusions = currentInfusions.value.filter((infusion) => {
+      // Check infusion.id
+      if (infusion.id && infusion.id.toString().includes(newSearchId.toString())) {
+        return true
+      }
+      // Check infusion.id_stack_number
+      if (infusion.id_stack_number && infusion.id_stack_number.toString().includes(newSearchId.toString())) {
+        return true
+      }
+      // Check pumps in pumpstacks
+      if (Array.isArray(infusion.pumps)) {
+        return infusion.pumps.some(
+          (pump) =>
+            (pump.id && pump.id.toString().includes(newSearchId.toString())) ||
+            (pump.id_stack_number && pump.id_stack_number.toString().includes(newSearchId.toString()))
+        )
+      }
+      return false
+    })
+    updateInfusions(filteredInfusions)
+  } else {
+    updateInfusions(PumpStackInfusions)
+  }
+})
+
 
 onMounted(() => {
   fetchInfusionPumps()
@@ -516,15 +544,19 @@ console.log(axiosInfusionPumps)
         class="md:mr-[69vw] md:h-[2vw] md:visible invisible"
       />
       <h1
-        class="text-white font-script font-bold text-bold text-4xl left-[23vw] md:top-8 w-[40vw] absolute md:mr-[24vw] mr-[4vw] md:visible invisible h-[3vw]"
+        class="text-white font-script font-bold text-bold text-4xl left-[15vw] md:top-8 w-[20vw] absolute md:mr-[24vw] mr-[4vw] md:visible invisible h-[3vw]"
       >
         {{ afdeling }}
       </h1>
       <h1
-        class="text-white font-script font-bold text-bold text-4xl left-[43vw] md:top-8 w-[40vw] absolute md:mr-[24vw] mr-[4vw] md:visible invisible h-[3vw]"
+        class="text-white font-script font-bold text-bold text-4xl left-[33vw] md:top-8 w-[25vw] absolute md:mr-[24vw] mr-[4vw] md:visible invisible h-[3vw]"
       >
         {{ amountOfInfusions }} infusions, {{ amountOfInfusionsWithStacks }} Pumpstacks
       </h1>
+      <input class="md:flex md:static absolute top-3 left-20 w-[70vw] md:w-full md:h-[5vh] mr-2 bg-gray-50 border border-gray-300 hover:bg-gray-100 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-300 dark:border-gray-600 dark:hover:bg-gray-400 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
+             v-model="searchId"
+             type="number"
+             placeholder="Search by ID" />
       <select
         v-model="afdeling"
         class="md:flex md:static absolute top-3 left-18 w-[70vw] md:w-full md:h-[5vh] bg-gray-50 border border-gray-300 hover:bg-gray-100 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-300 dark:border-gray-600 dark:hover:bg-gray-400 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
