@@ -31,7 +31,9 @@ function selectForPrint() {
   if (infusionsForPdfStore.containsId(props.id)) {
     infusionsForPdfStore.removeInfusion(props)
   } else {
+    console.log(props)
     infusionsForPdfStore.addInfusion(props)
+    console.log('current infusions', infusionsForPdfStore.getInfusions)
   }
 }
 const selected = computed(() => {

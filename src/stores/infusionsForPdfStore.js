@@ -12,20 +12,23 @@ export const useInfusionsForPdfStore = defineStore('infusionsForPdf', {
   },
   actions: {
     addInfusion(infusion) {
-      if (!this.infusions.includes(infusion)) {
+      if (!this.infusions.some((i) => i.id === infusion.id)) {
         this.infusions.push(infusion)
         this.setAmountOfPDF(this.infusions.length)
         console.log('Infusion added:', infusion)
+      } else {
+        console.log('Infusion with this ID already exists:', infusion.id)
       }
     },
     removeInfusion(infusion) {
-      console.log('Infusion removed:', infusion)
-      if (this.infusions.includes(infusion)) {
-        this.infusions.splice(this.infusions.indexOf(infusion), 1)
+      const index = this.infusions.findIndex((i) => i.id === infusion.id)
+      if (index !== -1) {
+        this.infusions.splice(index, 1)
         this.setAmountOfPDF(this.infusions.length)
         console.log('Infusion removed:', infusion)
+      } else {
+        console.log('Cannot remove infusion, it is not in the list:', infusion)
       }
-      console.log('current infusions:', this.getInfusions)
     },
     setInfusions(newInfusions) {
       this.infusions = newInfusions
