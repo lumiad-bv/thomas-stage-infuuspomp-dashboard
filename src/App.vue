@@ -487,8 +487,6 @@ function reverse() {
 const toggleGroupItemClasses =
   'hover:bg-gray-200  data-[state=on]:bg-blue-500 data-[state=on]:text-white  flex h-[35px] xl:w-[20vw] md:w-[35vw] w-[30vw] items-center justify-center bg-white text-base leading-4 first:rounded-l  last:rounded-r focus:z-10 focus:shadow-[0_0_0_2px] focus:shadow-black focus:outline-none dark:bg-gray-300 border-1 border-gray-300 dark:border-gray-600 dark:hover:bg-gray-400 dark:data-[state=on]:bg-gray-400 '
 
-
-
 const axiosInfusionPumps = ref([])
 
 const fetchInfusionPumps = async () => {
@@ -509,7 +507,10 @@ watch(searchId, (newSearchId) => {
         return true
       }
       // Check infusion.id_stack_number
-      if (infusion.id_stack_number && infusion.id_stack_number.toString().includes(newSearchId.toString())) {
+      if (
+        infusion.id_stack_number &&
+        infusion.id_stack_number.toString().includes(newSearchId.toString())
+      ) {
         return true
       }
       // Check pumps in pumpstacks
@@ -517,7 +518,8 @@ watch(searchId, (newSearchId) => {
         return infusion.pumps.some(
           (pump) =>
             (pump.id && pump.id.toString().includes(newSearchId.toString())) ||
-            (pump.id_stack_number && pump.id_stack_number.toString().includes(newSearchId.toString()))
+            (pump.id_stack_number &&
+              pump.id_stack_number.toString().includes(newSearchId.toString())),
         )
       }
       return false
@@ -527,7 +529,6 @@ watch(searchId, (newSearchId) => {
     updateInfusions(PumpStackInfusions)
   }
 })
-
 
 onMounted(() => {
   fetchInfusionPumps()
@@ -543,23 +544,16 @@ console.log(axiosInfusionPumps)
         alt="logo"
         class="md:mr-[69vw] md:h-[2vw] md:visible invisible"
       />
-      <h1
-        class="text-white font-script font-bold text-bold text-4xl left-[15vw] md:top-8 w-[20vw] absolute md:mr-[24vw] mr-[4vw] md:visible invisible h-[3vw]"
-      >
-        {{ afdeling }}
-      </h1>
-      <h1
-        class="text-white font-script font-bold text-bold text-4xl left-[33vw] md:top-8 w-[25vw] absolute md:mr-[24vw] mr-[4vw] md:visible invisible h-[3vw]"
-      >
-        {{ amountOfInfusions }} infusions, {{ amountOfInfusionsWithStacks }} Pumpstacks
-      </h1>
-      <input class="md:flex md:static absolute top-3 left-20 w-[70vw] md:w-full md:h-[5vh] mr-2 bg-gray-50 border border-gray-300 hover:bg-gray-100 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-300 dark:border-gray-600 dark:hover:bg-gray-400 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
-             v-model="searchId"
-             type="number"
-             placeholder="Search by ID" />
+
+      <input
+        class=" absolute top-5 left-[12vw] w-[20vw] md:h-[5vh] mr-2 bg-gray-50 border border-gray-300 hover:bg-gray-100 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-300 dark:border-gray-600 dark:hover:bg-gray-400 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
+        v-model="searchId"
+        type="number"
+        placeholder="Search by ID"
+      />
       <select
         v-model="afdeling"
-        class="md:flex md:static absolute top-3 left-18 w-[70vw] md:w-full md:h-[5vh] bg-gray-50 border border-gray-300 hover:bg-gray-100 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-300 dark:border-gray-600 dark:hover:bg-gray-400 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
+        class=" absolute top-5 right-[17vw] w-[16vw]  md:h-[5vh] bg-gray-50 border border-gray-300 hover:bg-gray-100 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-300 dark:border-gray-600 dark:hover:bg-gray-400 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
       >
         <option
           v-for="(option, index) in options"
@@ -572,16 +566,15 @@ console.log(axiosInfusionPumps)
       </select>
 
       <div
-        class="bg-green-600 hover:bg-green-400 w-[50vw] h-[5vh] mr-2 ml-2 items-center justify-center rounded-2xl flex text-white cursor-pointer text-center"
+        class="bg-green-600 hover:bg-green-400 absolute w-[14vw] top-5 right-[1vw] h-[5vh] mr-2 ml-2 items-center justify-center rounded-2xl flex text-white cursor-pointer text-center"
         @click="showModal"
       >
-        export {{ pdfStore.getAmountOfPDF }} {{infusionsOneOrMore}}
+        export {{ pdfStore.getAmountOfPDF }} {{ infusionsOneOrMore }}
       </div>
-
     </header>
 
     <infusionsModal v-show="isModalVisible" @close="closeModal" />
-    <section class="md:flex 4xl:h-[88.9vh] md:h-[85vh] dark:bg-black">
+    <section class="md:flex 4xl:h-[87.4vh] md:h-[85vh] dark:bg-black">
       <div
         class="w-[100vw] h-[90vh] m-3 xl:static bg-gray-200 dark:bg-gray-500 md:rounded-[1vw] rounded-[3vw] p-2 overflow-x-hidden"
       >
@@ -626,7 +619,7 @@ console.log(axiosInfusionPumps)
         </div>
 
         <div
-          class="4xl:m-3 md:m-1 m-2 4xl:h-[80vh] xl:h-[70vh] md:h-[70.2vh] h-[71.3vh] overflow-auto"
+          class="4xl:m-3 md:m-1 m-2 4xl:h-[79vh] xl:h-[70vh] md:h-[70.2vh] h-[71.3vh] overflow-auto"
         >
           <div v-for="item in currentInfusions" :key="item.id || item.id_stack_number" class="mb-2">
             <!-- Regular infusion -->
@@ -658,6 +651,9 @@ console.log(axiosInfusionPumps)
             />
           </div>
         </div>
+        <div class=" w-[78vw] col-span-7 xl:w-full bg-gray-50 border border-gray-300  md:rounded-[1vw] rounded-[3vw] text-center">
+          Showing: {{afdeling}}        {{ amountOfInfusions }} infusions, {{ amountOfInfusionsWithStacks }} Pumpstacks
+        </div>
       </div>
 
       <div
@@ -665,11 +661,10 @@ console.log(axiosInfusionPumps)
       >
         <div
           id="infuusDetails"
-          class="bg-gray-200 xl:static  flex-initial overflow-hidden rounded-[1vw] p-5 font-[Open_Sans] text-2xl text-ellipsis [&::-webkit-scrollbar]:[width:10px] [&::-webkit-scrollbar]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-400"
+          class="bg-gray-200 xl:static flex-initial overflow-hidden rounded-[1vw] p-5 font-[Open_Sans] text-2xl text-ellipsis [&::-webkit-scrollbar]:[width:10px] [&::-webkit-scrollbar]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-400"
         >
           <RouterView />
         </div>
-
       </div>
     </section>
   </body>
