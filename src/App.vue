@@ -9,6 +9,8 @@ import { Icon } from '@iconify/vue'
 import { useSelectedButtonStore } from '@/stores/selectedButtonStore'
 const selectedButtoneStore = useSelectedButtonStore()
 import { useInfusionsForPdfStore } from '@/stores/infusionsForPdfStore'
+import {useInfusionValueStore} from '@/stores/infusionValueStore.js'
+const infusionValueStore = useInfusionValueStore()
 const pdfStore = useInfusionsForPdfStore()
 import StackButtons from '@/components/StackButtons.vue'
 const route = useRoute()
@@ -18,6 +20,41 @@ import * as pdfFonts from 'pdfmake/build/vfs_fonts'
 // ✅ Correct way to access vfs
 pdfMake.vfs = pdfFonts.default.vfs
 const currentSelectedInfusion = ref(null)
+
+function catalogueInfusionAttributes() {
+  const attributes = [
+    'floor',
+    'drug',
+    'totalMl',
+    'remainingMl',
+    'timeRemaining',
+    'softwareVersion',
+    'medicalLibraryVersion',
+  ];
+  const result = {};
+  for (const attr of attributes) {
+    result[attr] = new Set();
+  }
+  for (const item of PumpStackInfusions) {
+    if (Array.isArray(item.pumps)) {
+      for (const pump of item.pumps) {
+        attributes.forEach((attr) => {
+          if (pump[attr] !== undefined) result[attr].add(pump[attr]);
+        });
+      }
+    } else {
+      attributes.forEach((attr) => {
+        if (item[attr] !== undefined) result[attr].add(item[attr]);
+      });
+    }
+  }
+  // Convert sets to arrays
+  Object.keys(result).forEach((key) => {
+    result[key] = Array.from(result[key]);
+  });
+  return result;
+}
+infusionValueStore.setInfusionValues(catalogueInfusionAttributes() )
 
 import infusionsModal from '@/components/infusionsModal.vue'
 

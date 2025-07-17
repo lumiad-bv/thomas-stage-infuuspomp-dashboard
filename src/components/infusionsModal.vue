@@ -7,6 +7,7 @@ import { ref, watch } from 'vue'
 import { Icon } from '@iconify/vue'
 import { Toggle } from 'radix-vue'
 import zipcelx from 'zipcelx'
+import { useInfusionValueStore } from '@/stores/infusionValueStore.js'
 
 // Setup PDF store and fonts
 const infusionStore = useInfusionsForPdfStore()
@@ -290,25 +291,10 @@ const exportAttributes = [
 ]
 
 function getDetailOptions(choice) {
+  console.log(choice)
+  const getValuesByKey  = useInfusionValueStore();
   if (!choice) return [];
-  switch (choice) {
-    case 'floor':
-      return ['1', '2', '3', '4', '5'];
-    case 'drug':
-      return ['Paracetamol', 'Ibuprofen', 'Morphine'];
-    case 'totalMl':
-      return ['50', '100', '250', '500'];
-    case 'remainingMl':
-      return ['10', '20', '30', '40'];
-    case 'timeRemaining':
-      return ['00:10', '00:30', '01:00', '02:00'];
-    case 'softwareVersion':
-      return ['v1.0', 'v2.0', 'v3.0'];
-    case 'medicalLibraryVersion':
-      return ['2023A', '2023B', '2024A'];
-    default:
-      return [];
-  }
+  return getValuesByKey.getInfusionValuesByValue(choice);
 }
 const selectedAttributes = ref([])
 </script>
