@@ -97,6 +97,7 @@ const options = [
   'Neurosurgery',
   'Anaesthesiology',
 ]
+
 const afdeling = defineModel('afdeling')
 provide('afdeling', afdeling)
 onMounted(() => {
@@ -449,6 +450,17 @@ const fetchInfusionPumps = async () => {
     console.error('Fout bij ophalen infusionpumps:', error)
   }
 }
+const searchTypes = [
+  'id',
+  'department',
+  'floor',
+  'ward',
+  'bed',
+  'drug',
+  'softwareVersion',
+  'medicalLibraryVersion',
+]
+const searchByChoice = ref('id')
 const searchId = ref('')
 watch(searchId, (newSearchId) => {
 
@@ -456,29 +468,36 @@ watch(searchId, (newSearchId) => {
   if (newSearchId) {
     let baseInfusions = PumpStackInfusions
     if (afdeling.value !== 'All departments') {
-      baseInfusions = filterWithPumpstacks(afdeling.value)}
+      baseInfusions = filterWithPumpstacks(afdeling.value)
+    }
+    const searchValue = newSearchId.toLowerCase()
     const filteredInfusions = baseInfusions.filter((infusion) => {
-      // Check infusion.id
-      if (infusion.id && infusion.id.toString().includes(newSearchId.toString())) {
-        return true
-      }
-      // Check infusion.id_stack_number
-      if (
-        infusion.id_stack_number &&
-        infusion.id_stack_number.toString().includes(newSearchId.toString())
-      ) {
-        return true
-      }
-      // Check pumps in pumpstacks
+      const type = searchByChoice.value
       if (Array.isArray(infusion.pumps)) {
-        return infusion.pumps.some(
-          (pump) =>
-            (pump.id && pump.id.toString().includes(newSearchId.toString())) ||
-            (pump.id_stack_number &&
-              pump.id_stack_number.toString().includes(newSearchId.toString())),
-        )
+        return infusion.pumps.some((pump) => {
+          if (type === 'id' && pump.id && pump.id.toLowerCase().includes(searchValue)) return true
+          if (type === 'id_stack_number' && pump.id_stack_number && pump.id_stack_number.toLowerCase().includes(searchValue)) return true
+          if (type === 'department' && pump.department && pump.department.toLowerCase().includes(searchValue)) return true
+          if (type === 'floor' && pump.floor && pump.floor.toLowerCase().includes(searchValue)) return true
+          if (type === 'ward' && pump.ward && pump.ward.toLowerCase().includes(searchValue)) return true
+          if (type === 'bed' && pump.bed && pump.bed.toLowerCase().includes(searchValue)) return true
+          if (type === 'drug' && pump.drug && pump.drug.toLowerCase().includes(searchValue)) return true
+          if (type === 'softwareVersion' && pump.softwareVersion && pump.softwareVersion.toLowerCase().includes(searchValue)) return true
+          if (type === 'medicalLibraryVersion' && pump.medicalLibraryVersion && pump.medicalLibraryVersion.toLowerCase().includes(searchValue)) return true
+          return false
+        })
+      } else {
+        if (type === 'id' && infusion.id && infusion.id.toLowerCase().includes(searchValue)) return true
+        if (type === 'id_stack_number' && infusion.id_stack_number && infusion.id_stack_number.toLowerCase().includes(searchValue)) return true
+        if (type === 'department' && infusion.department && infusion.department.toLowerCase().includes(searchValue)) return true
+        if (type === 'floor' && infusion.floor && infusion.floor.toLowerCase().includes(searchValue)) return true
+        if (type === 'ward' && infusion.ward && infusion.ward.toLowerCase().includes(searchValue)) return true
+        if (type === 'bed' && infusion.bed && infusion.bed.toLowerCase().includes(searchValue)) return true
+        if (type === 'drug' && infusion.drug && infusion.drug.toLowerCase().includes(searchValue)) return true
+        if (type === 'softwareVersion' && infusion.softwareVersion && infusion.softwareVersion.toLowerCase().includes(searchValue)) return true
+        if (type === 'medicalLibraryVersion' && infusion.medicalLibraryVersion && infusion.medicalLibraryVersion.toLowerCase().includes(searchValue)) return true
+        return false
       }
-      return false
     })
     updateInfusions(filteredInfusions)
   } else {
@@ -502,11 +521,23 @@ console.log(axiosInfusionPumps)
       />
 
       <input
-        class=" absolute top-5 left-[12vw] w-[20vw] md:h-[5vh] mr-2 bg-gray-50 border border-gray-300 hover:bg-gray-100 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-300 dark:border-gray-600 dark:hover:bg-gray-400 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
+        class=" absolute text-right top-5 left-[12vw] w-[16vw] md:h-[5vh] mr-2 bg-gray-50 border border-gray-300 hover:bg-gray-100 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-300 dark:border-gray-600 dark:hover:bg-gray-400 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
         v-model="searchId"
-        type="number"
-        placeholder="Search by ID"
+        type="text"
+        placeholder="Search by "
       />
+      <select  class=" absolute top-5 left-[28.5vw] w-[8vw] md:h-[5vh] mr-2 bg-gray-50 border border-gray-300 hover:bg-gray-100 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-300 dark:border-gray-600 dark:hover:bg-gray-400 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
+               v-model="searchByChoice">
+
+        <option
+          v-for="(searchType, index) in searchTypes"
+          :value="searchType"
+          :key="index"
+          v-bind:selected="index === 0"
+        >
+          {{ searchType }}
+        </option>
+      </select>
       <select
         v-model="afdeling"
         class=" absolute top-5 right-[17vw] w-[16vw]  md:h-[5vh] bg-gray-50 border border-gray-300 hover:bg-gray-100 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-300 dark:border-gray-600 dark:hover:bg-gray-400 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
