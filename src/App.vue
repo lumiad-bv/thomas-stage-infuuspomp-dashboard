@@ -455,9 +455,12 @@ const fetchInfusionPumps = async () => {
 }
 const searchId = ref('')
 watch(searchId, (newSearchId) => {
+
   // Always use the full PumpStackInfusions as the base for searching
-  const baseInfusions = PumpStackInfusions
   if (newSearchId) {
+    let baseInfusions = PumpStackInfusions
+    if (afdeling.value !== 'All departments') {
+      baseInfusions = filterWithPumpstacks(afdeling.value)}
     const filteredInfusions = baseInfusions.filter((infusion) => {
       // Check infusion.id
       if (infusion.id && infusion.id.toString().includes(newSearchId.toString())) {
