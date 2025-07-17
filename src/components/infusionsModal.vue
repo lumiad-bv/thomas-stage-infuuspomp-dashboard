@@ -340,7 +340,7 @@ const selectedAttributes = ref([])
               {{ opt }}
             </option>
           </select>
-        //TODO fix export button
+<!--        TODO fix export button-->
         <div
           class="bg-green-600 hover:bg-green-400   w-[5vw] h-[3.5vh] mr-2 ml-2 items-center justify-center rounded-lg flex text-white cursor-pointer text-center"
           @click="exportSelection"
