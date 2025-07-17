@@ -49,25 +49,28 @@ onMounted(() => {
       <div class="text-center grid grid-cols-1 relative">
         <div class="bg-blue-500 text-white rounded-md m-1 p-1">Drugs in pumpstack</div>
         <div class="bg-gray-300 rounded-md m-1 p-1">
-          <table class="w-full text-sm text-left rtl:text-right text-black dark:text-white" v-if="pumpStack.pumps && pumpStack.pumps.length">
-            <thead class="text-xs text-white uppercase bg-blue-500 dark:bg-gray-700 dark:text-gray-400">
-            <tr>
-              <th>Pump id</th>
-              <th>Drug</th>
-              <th>Amount left</th>
-            </tr>
+          <table
+            class="w-full text-sm text-left rtl:text-right text-black dark:text-white"
+            v-if="pumpStack.pumps && pumpStack.pumps.length"
+          >
+            <thead
+              class="text-xs text-white uppercase bg-blue-500 dark:bg-gray-700 dark:text-gray-400"
+            >
+              <tr>
+                <th class="border border-gray-800 px-4 py-2">Pump id</th>
+                <th class="border border-gray-800 px-4 py-2">Drug</th>
+                <th class="border border-gray-800 px-4 py-2">Amount left</th>
+              </tr>
             </thead>
             <tbody>
-            <tr v-for="infusion in pumpStack.pumps" :key="infusion.id">
-              <td>{{ infusion.id }}</td>
-              <td>{{ infusion.drug }}</td>
-              <td>{{ infusion.remainingMl }} ml</td>
-            </tr>
+              <tr v-for="infusion in pumpStack.pumps" :key="infusion.id">
+                <td class="border border-gray-800 px-4 py-2">{{ infusion.id }}</td>
+                <td class="border border-gray-800 px-4 py-2">{{ infusion.drug }}</td>
+                <td class="border border-gray-800 px-4 py-2">{{ infusion.remainingMl }} ml</td>
+              </tr>
             </tbody>
           </table>
-          <div v-else>
-            No infusions found.
-          </div>
+          <div v-else>No infusions found.</div>
         </div>
       </div>
     </div>

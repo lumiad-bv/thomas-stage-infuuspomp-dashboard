@@ -187,15 +187,15 @@ watch(afdeling, (newAfdeling) => {
   }
   filterAllInfusionsNoMap(newAfdeling)
   excecuteFilters()
-  const allInPdfStore = currentInfusions.value.every(item => {
+  const allInPdfStore = currentInfusions.value.every((item) => {
     if (Array.isArray(item.pumps)) {
-      return item.pumps.every(pump => pdfStore.containsId(pump.id))
+      return item.pumps.every((pump) => pdfStore.containsId(pump.id))
     } else {
       return pdfStore.containsId(item.id)
     }
   })
   console.log('All currentInfusions in PDF store:', allInPdfStore)
-  exportCurrent.value = !!allInPdfStore;
+  exportCurrent.value = !!allInPdfStore
 })
 
 // Function to filter current infusions with stack support
@@ -384,7 +384,7 @@ const toggleState = ref(false)
 const exportCurrent = ref(false)
 watch(exportCurrent, () => {
   if (exportCurrent.value) {
-    console.log('value of infusions before adding all' , pdfStore.getInfusions)
+    console.log('value of infusions before adding all', pdfStore.getInfusions)
     // Add all current infusions to the PDF store
     const allInfusions = []
     for (const item of currentInfusions.value) {
@@ -397,8 +397,7 @@ watch(exportCurrent, () => {
     console.log('infusions to add', allInfusions)
     allInfusions.forEach((infusion) => {
       console.log(infusion)
-        pdfStore.addInfusion(infusion)
-
+      pdfStore.addInfusion(infusion)
     })
     console.log(pdfStore.getInfusions)
   } else {
@@ -422,7 +421,6 @@ watch(exportCurrent, () => {
       }
     })
   }
-
 })
 
 watch(toggleState, () => {
@@ -463,7 +461,6 @@ const searchTypes = [
 const searchByChoice = ref('id')
 const searchId = ref('')
 watch(searchId, (newSearchId) => {
-
   // Always use the full PumpStackInfusions as the base for searching
   if (newSearchId) {
     let baseInfusions = PumpStackInfusions
@@ -476,26 +473,76 @@ watch(searchId, (newSearchId) => {
       if (Array.isArray(infusion.pumps)) {
         return infusion.pumps.some((pump) => {
           if (type === 'id' && pump.id && pump.id.toLowerCase().includes(searchValue)) return true
-          if (type === 'id_stack_number' && pump.id_stack_number && pump.id_stack_number.toLowerCase().includes(searchValue)) return true
-          if (type === 'department' && pump.department && pump.department.toLowerCase().includes(searchValue)) return true
-          if (type === 'floor' && pump.floor && pump.floor.toLowerCase().includes(searchValue)) return true
-          if (type === 'ward' && pump.ward && pump.ward.toLowerCase().includes(searchValue)) return true
-          if (type === 'bed' && pump.bed && pump.bed.toLowerCase().includes(searchValue)) return true
-          if (type === 'drug' && pump.drug && pump.drug.toLowerCase().includes(searchValue)) return true
-          if (type === 'softwareVersion' && pump.softwareVersion && pump.softwareVersion.toLowerCase().includes(searchValue)) return true
-          return !!(type === 'medicalLibraryVersion' && pump.medicalLibraryVersion && pump.medicalLibraryVersion.toLowerCase().includes(searchValue));
-
+          if (
+            type === 'id_stack_number' &&
+            pump.id_stack_number &&
+            pump.id_stack_number.toLowerCase().includes(searchValue)
+          )
+            return true
+          if (
+            type === 'department' &&
+            pump.department &&
+            pump.department.toLowerCase().includes(searchValue)
+          )
+            return true
+          if (type === 'floor' && pump.floor && pump.floor.toLowerCase().includes(searchValue))
+            return true
+          if (type === 'ward' && pump.ward && pump.ward.toLowerCase().includes(searchValue))
+            return true
+          if (type === 'bed' && pump.bed && pump.bed.toLowerCase().includes(searchValue))
+            return true
+          if (type === 'drug' && pump.drug && pump.drug.toLowerCase().includes(searchValue))
+            return true
+          if (
+            type === 'softwareVersion' &&
+            pump.softwareVersion &&
+            pump.softwareVersion.toLowerCase().includes(searchValue)
+          )
+            return true
+          return !!(
+            type === 'medicalLibraryVersion' &&
+            pump.medicalLibraryVersion &&
+            pump.medicalLibraryVersion.toLowerCase().includes(searchValue)
+          )
         })
       } else {
-        if (type === 'id' && infusion.id && infusion.id.toLowerCase().includes(searchValue)) return true
-        if (type === 'id_stack_number' && infusion.id_stack_number && infusion.id_stack_number.toLowerCase().includes(searchValue)) return true
-        if (type === 'department' && infusion.department && infusion.department.toLowerCase().includes(searchValue)) return true
-        if (type === 'floor' && infusion.floor && infusion.floor.toLowerCase().includes(searchValue)) return true
-        if (type === 'ward' && infusion.ward && infusion.ward.toLowerCase().includes(searchValue)) return true
-        if (type === 'bed' && infusion.bed && infusion.bed.toLowerCase().includes(searchValue)) return true
-        if (type === 'drug' && infusion.drug && infusion.drug.toLowerCase().includes(searchValue)) return true
-        if (type === 'softwareVersion' && infusion.softwareVersion && infusion.softwareVersion.toLowerCase().includes(searchValue)) return true
-        return !!(type === 'medicalLibraryVersion' && infusion.medicalLibraryVersion && infusion.medicalLibraryVersion.toLowerCase().includes(searchValue));
+        if (type === 'id' && infusion.id && infusion.id.toLowerCase().includes(searchValue))
+          return true
+        if (
+          type === 'id_stack_number' &&
+          infusion.id_stack_number &&
+          infusion.id_stack_number.toLowerCase().includes(searchValue)
+        )
+          return true
+        if (
+          type === 'department' &&
+          infusion.department &&
+          infusion.department.toLowerCase().includes(searchValue)
+        )
+          return true
+        if (
+          type === 'floor' &&
+          infusion.floor &&
+          infusion.floor.toLowerCase().includes(searchValue)
+        )
+          return true
+        if (type === 'ward' && infusion.ward && infusion.ward.toLowerCase().includes(searchValue))
+          return true
+        if (type === 'bed' && infusion.bed && infusion.bed.toLowerCase().includes(searchValue))
+          return true
+        if (type === 'drug' && infusion.drug && infusion.drug.toLowerCase().includes(searchValue))
+          return true
+        if (
+          type === 'softwareVersion' &&
+          infusion.softwareVersion &&
+          infusion.softwareVersion.toLowerCase().includes(searchValue)
+        )
+          return true
+        return !!(
+          type === 'medicalLibraryVersion' &&
+          infusion.medicalLibraryVersion &&
+          infusion.medicalLibraryVersion.toLowerCase().includes(searchValue)
+        )
       }
     })
     updateInfusions(filteredInfusions)
@@ -520,14 +567,15 @@ console.log(axiosInfusionPumps)
       />
 
       <input
-        class=" absolute text-right top-5 left-[12vw] w-[16vw] md:h-[5vh] mr-2 bg-gray-50 border border-gray-300 hover:bg-gray-100 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-300 dark:border-gray-600 dark:hover:bg-gray-400 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
+        class="absolute text-right top-5 left-[12vw] w-[16vw] md:h-[5vh] mr-2 bg-gray-50 border border-gray-300 hover:bg-gray-100 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-300 dark:border-gray-600 dark:hover:bg-gray-400 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
         v-model="searchId"
         type="text"
         placeholder="Search by "
       />
-      <select  class=" absolute top-5 left-[28.5vw] w-[8vw] md:h-[5vh] mr-2 bg-gray-50 border border-gray-300 hover:bg-gray-100 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-300 dark:border-gray-600 dark:hover:bg-gray-400 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
-               v-model="searchByChoice">
-
+      <select
+        class="absolute top-5 left-[28.5vw] w-[8vw] md:h-[5vh] mr-2 bg-gray-50 border border-gray-300 hover:bg-gray-100 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-300 dark:border-gray-600 dark:hover:bg-gray-400 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
+        v-model="searchByChoice"
+      >
         <option
           v-for="(searchType, index) in searchTypes"
           :value="searchType"
@@ -539,7 +587,7 @@ console.log(axiosInfusionPumps)
       </select>
       <select
         v-model="afdeling"
-        class=" absolute top-5 right-[17vw] w-[16vw]  md:h-[5vh] bg-gray-50 border border-gray-300 hover:bg-gray-100 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-300 dark:border-gray-600 dark:hover:bg-gray-400 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
+        class="absolute top-5 right-[17vw] w-[16vw] md:h-[5vh] bg-gray-50 border border-gray-300 hover:bg-gray-100 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-300 dark:border-gray-600 dark:hover:bg-gray-400 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
       >
         <option
           v-for="(option, index) in options"
@@ -602,9 +650,11 @@ console.log(axiosInfusionPumps)
           >
             <Icon icon="radix-icons:caret-sort" class="color-black" />
           </Toggle>
-          <Toggle v-model:pressed="exportCurrent"
-                  aria-label="Toggle italic"
-                  class="hover:bg-gray-200 text-black data-[state=on]:bg-green-500 data-[state=on]:text-white flex items-center justify-center rounded bg-gray-50 border  border-gray-300">
+          <Toggle
+            v-model:pressed="exportCurrent"
+            aria-label="Toggle italic"
+            class="hover:bg-gray-200 text-black data-[state=on]:bg-green-500 data-[state=on]:text-white flex items-center justify-center rounded bg-gray-50 border border-gray-300"
+          >
             <h1>Export current</h1>
           </Toggle>
         </div>
@@ -642,8 +692,11 @@ console.log(axiosInfusionPumps)
             />
           </div>
         </div>
-        <div class=" w-[78vw] col-span-7 xl:w-full bg-blue-500 text-white border border-gray-300  md:rounded-[1vw] rounded-[3vw] text-center">
-          Showing: {{afdeling}}        {{ amountOfInfusions }} infusions, {{ amountOfInfusionsWithStacks }} Pumpstacks
+        <div
+          class="w-[78vw] col-span-7 xl:w-full bg-blue-500 text-white border border-gray-300 md:rounded-[1vw] rounded-[3vw] text-center"
+        >
+          Showing: {{ afdeling }} {{ amountOfInfusions }} infusions,
+          {{ amountOfInfusionsWithStacks }} Pumpstacks
         </div>
       </div>
 
