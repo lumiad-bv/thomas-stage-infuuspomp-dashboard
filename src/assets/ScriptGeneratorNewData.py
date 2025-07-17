@@ -222,7 +222,7 @@ def generate_data(num_entries):
     return data
 
 # Generate 500 entries
-amount_of_data = 1000
+amount_of_data = 1200
 generated_data = generate_data(amount_of_data)
 
 # Convert to JSON format

@@ -1,7 +1,6 @@
 <script setup>
 import { ref, watch, onMounted, computed } from 'vue'
 import { useRoute } from 'vue-router'
-// import dummy from '@/assets/generated_data_unique_with_time.json'
 import PumpStackInfusions from '@/assets/generated_data_with_pumpstacks.json'
 import { ProgressIndicator, ProgressRoot } from 'radix-vue'
 const infusion = ref(null)
@@ -70,64 +69,64 @@ onMounted(() => {
 
 <template>
   <div class="grid grid-cols-1 static">
-    <div class="xl:col-span-3 grid grid-cols-1 gap-2" v-if="infusion">
+    <div class="xl:col-span-3 grid grid-cols-2 gap-2" v-if="infusion">
       <div class="text-center grid grid-cols-2 relative">
-        <div class="bg-blue-500 text-white rounded-full m-1 p-1">department</div>
-        <div class="bg-gray-300 rounded-full m-1 p-1">{{ infusion.department }}</div>
+        <div class="bg-blue-500 text-white rounded-md m-1 p-1">department</div>
+        <div class="bg-gray-300 rounded-md m-1 p-1">{{ infusion.department }}</div>
       </div>
       <div class="text-center grid grid-cols-2 relative">
-        <div class="bg-blue-500 text-white rounded-full m-1 p-1">floor</div>
-        <div class="bg-gray-300 rounded-full m-1 p-1">{{ infusion.floor }}</div>
+        <div class="bg-blue-500 text-white rounded-md m-1 p-1">floor</div>
+        <div class="bg-gray-300 rounded-md m-1 p-1">{{ infusion.floor }}</div>
       </div>
       <div class="text-center grid grid-cols-2 relative">
-        <div class="bg-blue-500 text-white rounded-full m-1 p-1">ward</div>
-        <div class="bg-gray-300 rounded-full m-1 p-1">{{ infusion.ward }}</div>
+        <div class="bg-blue-500 text-white rounded-md m-1 p-1">ward</div>
+        <div class="bg-gray-300 rounded-md m-1 p-1">{{ infusion.ward }}</div>
       </div>
       <div class="text-center grid grid-cols-2 relative">
-        <div class="bg-blue-500 text-white rounded-full m-1 p-1">bed</div>
-        <div class="bg-gray-300 rounded-full m-1 p-1">{{ infusion.bed }}</div>
+        <div class="bg-blue-500 text-white rounded-md m-1 p-1">bed</div>
+        <div class="bg-gray-300 rounded-md m-1 p-1">{{ infusion.bed }}</div>
       </div>
       <div class="text-center grid grid-cols-2 relative">
-        <div class="bg-blue-500 text-white rounded-full m-1 p-1">drug</div>
-        <div class="bg-gray-300 rounded-full m-1 p-1">{{ infusion.drug }}</div>
+        <div class="bg-blue-500 text-white rounded-md m-1 p-1">drug</div>
+        <div class="bg-gray-300 rounded-md m-1 p-1">{{ infusion.drug }}</div>
       </div>
       <div class="text-center grid grid-cols-2 relative">
-        <div class="bg-blue-500 text-white rounded-full m-1 p-1">totalMl</div>
-        <div class="bg-gray-300 rounded-full m-1 p-1">{{ infusion.totalMl }}</div>
+        <div class="bg-blue-500 text-white rounded-md m-1 p-1">totalMl</div>
+        <div class="bg-gray-300 rounded-md m-1 p-1">{{ infusion.totalMl }}</div>
       </div>
       <div class="text-center grid grid-cols-2 relative">
-        <div class="bg-blue-500 text-white rounded-full m-1 p-1">remainingMl</div>
-        <div class="bg-gray-300 rounded-full m-1 p-1">{{ infusion.remainingMl }}</div>
+        <div class="bg-blue-500 text-white rounded-md m-1 p-1">remainingMl</div>
+        <div class="bg-gray-300 rounded-md m-1 p-1">{{ infusion.remainingMl }}</div>
       </div>
       <div class="text-center grid grid-cols-2 relative">
-        <div class="bg-blue-500 text-white rounded-full m-1 p-1">mlPerHour</div>
-        <div class="bg-gray-300 rounded-full m-1 p-1">{{ infusion.mlPerHour }}</div>
+        <div class="bg-blue-500 text-white rounded-md m-1 p-1">mlPerHour</div>
+        <div class="bg-gray-300 rounded-md m-1 p-1">{{ infusion.mlPerHour }}</div>
       </div>
       <div class="text-center grid grid-cols-2 relative">
-        <div class="bg-blue-500 text-white rounded-full m-1 p-1">timeRunning</div>
-        <div class="bg-gray-300 rounded-full m-1 p-1">{{ infusion.timeRunning }}</div>
+        <div class="bg-blue-500 text-white rounded-md m-1 p-1">timeRunning</div>
+        <div class="bg-gray-300 rounded-md m-1 p-1">{{ infusion.timeRunning }}</div>
       </div>
       <div class="text-center grid grid-cols-2 relative">
-        <div class="bg-blue-500 text-white rounded-full m-1 p-1">timeRemaining</div>
-        <div class="bg-gray-300 rounded-full m-1 p-1">{{ infusion.timeRemaining }}</div>
+        <div class="bg-blue-500 text-white rounded-md m-1 p-1">timeRemaining</div>
+        <div class="bg-gray-300 rounded-md m-1 p-1">{{ infusion.timeRemaining }}</div>
       </div>
       <div class="text-center grid grid-cols-2 relative">
-        <div class="bg-blue-500 text-white rounded-full m-1 p-1">id</div>
-        <div class="bg-gray-300 rounded-full m-1 p-1">{{ infusion.id }}</div>
+        <div class="bg-blue-500 text-white rounded-md m-1 p-1">id</div>
+        <div class="bg-gray-300 rounded-md m-1 p-1">{{ infusion.id }}</div>
       </div>
       <div class="text-center grid grid-cols-2 relative">
-        <div class="bg-blue-500 text-white rounded-full m-1 p-1">softwareVersion</div>
-        <div class="bg-gray-300 rounded-full m-1 p-1">{{ infusion.softwareVersion }}</div>
+        <div class="bg-blue-500 text-white rounded-md m-1 p-1">softwareVersion</div>
+        <div class="bg-gray-300 rounded-md m-1 p-1">{{ infusion.softwareVersion }}</div>
       </div>
       <div class="text-center grid grid-cols-2 relative">
-        <div class="bg-blue-500 text-white rounded-full m-1 p-1">medicalLibraryVersion</div>
-        <div class="bg-gray-300 rounded-full m-1 p-1">{{ infusion.medicalLibraryVersion }}</div>
+        <div class="bg-blue-500 text-white rounded-md m-1 p-1">medicalLibraryVersion</div>
+        <div class="bg-gray-300 rounded-md m-1 p-1">{{ infusion.medicalLibraryVersion }}</div>
       </div>
     </div>
     <div class="pl-4 m-4" v-if="percentageForBar">
       <ProgressRoot
         v-model="percentage"
-        class="bg-gray-500 dark:bg-gray-300 relative overflow-hidden bg-blackA9 rounded-full w-full h-4 sm:h-[4vh] 4xl:h-[5vh]"
+        class="bg-gray-500 dark:bg-gray-300 relative overflow-hidden bg-blackA9 rounded-xl w-full h-4 sm:h-[4vh] 4xl:h-[5vh]"
         style="transform: translateZ(0)"
       >
         <ProgressIndicator

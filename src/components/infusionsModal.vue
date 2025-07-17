@@ -6,8 +6,7 @@ import InfusionPrintButtons from '@/components/infusionPrintButtons.vue'
 import { ref, watch } from 'vue'
 import { Icon } from '@iconify/vue'
 import { Toggle } from 'radix-vue'
-import zipcelx from 'zipcelx';
-
+import zipcelx from 'zipcelx'
 
 // Setup PDF store and fonts
 const infusionStore = useInfusionsForPdfStore()
@@ -18,7 +17,9 @@ const displayedInfusions = ref([])
 const selectedSortKey = ref('')
 const selectedPDF = ref(true)
 const isReverseOrder = ref(false)
-watch(selectedPDF.value, (value) => {console.log(value)})
+watch(selectedPDF.value, (value) => {
+  console.log(value)
+})
 
 /**
  * Returns a new array of infusions sorted by the given key or custom comparator.
@@ -48,9 +49,10 @@ function getSortedInfusions(infusionArray, sortKey) {
   // First, sort nested pump stacks if present
   const withSortedPumps = cloneArray.map((item) => {
     if (item.pumps) {
-      const comparator =sortKey === 'time'
-            ? (a, b) => calculateTimeRemainingSeconds(a) - calculateTimeRemainingSeconds(b)
-            : null
+      const comparator =
+        sortKey === 'time'
+          ? (a, b) => calculateTimeRemainingSeconds(a) - calculateTimeRemainingSeconds(b)
+          : null
       return { ...item, pumps: sortPumpStacks(item.pumps, sortKey, comparator) }
     }
     return item
@@ -104,71 +106,65 @@ const emit = defineEmits(['close'])
 function closeModal() {
   emit('close')
 }
-function exportInfusionDetailsExcel(){
-
+function exportInfusionDetailsExcel() {
   const config = {
     filename: `${Date.now()}_work_order`,
     sheet: {
-      data: []
-    }
-  };
+      data: [],
+    },
+  }
 
-  const dataSet = config.sheet.data;
+  const dataSet = config.sheet.data
 
-// Attribute configuration
+  // Attribute configuration
   const attributeConfig = {
-    id:                    { label: 'ID',                  get: i => i.id },
-    department:            { label: 'Department',          get: i => i.department },
-    floor:                 { label: 'Floor',               get: i => i.floor },
-    ward:                  { label: 'Ward',                get: i => i.ward },
-    bed:                   { label: 'Bed',                 get: i => i.bed },
-    drug:                  { label: 'Drug',                get: i => i.drug },
-    totalMl:               { label: 'Total ml',            get: i => i.totalMl },
-    remainingMl:           { label: 'Remaining ml',        get: i => i.remainingMl },
-    mlPerHour:             { label: 'Flow rate (ml/hr)',   get: i => i.mlPerHour },
-    timeRunning:           { label: 'Time running',        get: i => i.timeRunning },
-    time:                  { label: 'Time remaining',      get: i => i.timeRemaining },
-    softwareVersion:       { label: 'SW Version',          get: i => i.softwareVersion },
-    medicalLibraryVersion: { label: 'Med. Library Ver.',   get: i => i.medicalLibraryVersion }
-  };
+    id: { label: 'ID', get: (i) => i.id },
+    department: { label: 'Department', get: (i) => i.department },
+    floor: { label: 'Floor', get: (i) => i.floor },
+    ward: { label: 'Ward', get: (i) => i.ward },
+    bed: { label: 'Bed', get: (i) => i.bed },
+    drug: { label: 'Drug', get: (i) => i.drug },
+    totalMl: { label: 'Total ml', get: (i) => i.totalMl },
+    remainingMl: { label: 'Remaining ml', get: (i) => i.remainingMl },
+    mlPerHour: { label: 'Flow rate (ml/hr)', get: (i) => i.mlPerHour },
+    timeRunning: { label: 'Time running', get: (i) => i.timeRunning },
+    time: { label: 'Time remaining', get: (i) => i.timeRemaining },
+    softwareVersion: { label: 'SW Version', get: (i) => i.softwareVersion },
+    medicalLibraryVersion: { label: 'Med. Library Ver.', get: (i) => i.medicalLibraryVersion },
+  }
 
-// Determine which attributes to include
+  // Determine which attributes to include
   const keysToShow = selectedAttributes.value.length
     ? selectedAttributes.value
-    : Object.keys(attributeConfig);
+    : Object.keys(attributeConfig)
 
-// Add header row
-  const headerRow = keysToShow.map(key => ({
+  // Add header row
+  const headerRow = keysToShow.map((key) => ({
     value: attributeConfig[key]?.label || key,
-    type: "string"
-  }));
-  dataSet.push(headerRow);
+    type: 'string',
+  }))
+  dataSet.push(headerRow)
 
-// Add infusion rows
-  displayedInfusions.value.forEach(infusion => {
-    const row = keysToShow.map(key => {
-      const value = attributeConfig[key]?.get(infusion);
+  // Add infusion rows
+  displayedInfusions.value.forEach((infusion) => {
+    const row = keysToShow.map((key) => {
+      const value = attributeConfig[key]?.get(infusion)
       return {
         value,
-        type: typeof value === "number" ? "number" : "string"
-      };
-    });
-    dataSet.push(row);
-  });
+        type: typeof value === 'number' ? 'number' : 'string',
+      }
+    })
+    dataSet.push(row)
+  })
 
-// Export to Excel
-  zipcelx(config);
-
-
-
+  // Export to Excel
+  zipcelx(config)
 }
-
-
 
 function printInfusionDetails() {
   const doc = {
-    content: []
-  };
+    content: [],
+  }
   doc.content.push({
     alignment: 'right',
     image:
@@ -177,43 +173,49 @@ function printInfusionDetails() {
   })
   if (selectedSortKey && selectedSortKey.value) {
     console.log(selectedSortKey.value, isReverseOrder.value)
-    let sortingtext = `Sorted by ${selectedSortKey.value}` +
-      (isReverseOrder.value ? ' in reverse order' : '')
-    doc.content.push({alignment: 'left', text: `Infusion details, ${sortingtext}:`,
+    let sortingtext =
+      `Sorted by ${selectedSortKey.value}` + (isReverseOrder.value ? ' in reverse order' : '')
+    doc.content.push({
+      alignment: 'left',
+      text: `Infusion details, ${sortingtext}:`,
       style: 'header',
-      margin: [0, 0, 0, 8] })
+      margin: [0, 0, 0, 8],
+    })
   } else {
-    doc.content.push({alignment: 'left', text: 'Infusion details:',
+    doc.content.push({
+      alignment: 'left',
+      text: 'Infusion details:',
       style: 'header',
-      margin: [0, 0, 0, 8] })
+      margin: [0, 0, 0, 8],
+    })
   }
 
   // Define your attribute config once
   const attributeConfig = {
-    id:                    { label: 'ID',                  get: i => i.id },
-    department:            { label: 'Department',          get: i => i.department },
-    floor:                 { label: 'Floor',               get: i => i.floor },
-    ward:                  { label: 'Ward',                get: i => i.ward },
-    bed:                   { label: 'Bed',                 get: i => i.bed },
-    drug:                  { label: 'Drug',                get: i => i.drug },
-    totalMl:               { label: 'Total ml',            get: i => i.totalMl },
-    remainingMl:           { label: 'Remaining ml',        get: i => i.remainingMl },
-    mlPerHour:             { label: 'Flow rate (ml/hr)',   get: i => i.mlPerHour },
-    timeRunning:           { label: 'Time running',        get: i => i.timeRunning },
-    time:                  { label: 'Time remaining',      get: i => i.timeRemaining },
-    softwareVersion:       { label: 'SW Version',          get: i => i.softwareVersion },
-    medicalLibraryVersion: { label: 'Med. Library Ver.',    get: i => i.medicalLibraryVersion }
-  };
+    id: { label: 'ID', get: (i) => i.id },
+    department: { label: 'Department', get: (i) => i.department },
+    floor: { label: 'Floor', get: (i) => i.floor },
+    ward: { label: 'Ward', get: (i) => i.ward },
+    bed: { label: 'Bed', get: (i) => i.bed },
+    drug: { label: 'Drug', get: (i) => i.drug },
+    totalMl: { label: 'Total ml', get: (i) => i.totalMl },
+    remainingMl: { label: 'Remaining ml', get: (i) => i.remainingMl },
+    mlPerHour: { label: 'Flow rate (ml/hr)', get: (i) => i.mlPerHour },
+    timeRunning: { label: 'Time running', get: (i) => i.timeRunning },
+    time: { label: 'Time remaining', get: (i) => i.timeRemaining },
+    softwareVersion: { label: 'SW Version', get: (i) => i.softwareVersion },
+    medicalLibraryVersion: { label: 'Med. Library Ver.', get: (i) => i.medicalLibraryVersion },
+  }
 
   // For each infusion, build a compact table
   for (const infusion of displayedInfusions.value) {
     // Determine which keys to show
     const keysToShow = selectedAttributes.value.length
       ? selectedAttributes.value
-      : Object.keys(attributeConfig);
+      : Object.keys(attributeConfig)
 
     // Build table rows
-    const rows = [];
+    const rows = []
 
     // Header row for this infusion
     rows.push([
@@ -221,43 +223,40 @@ function printInfusionDetails() {
         text: `Infusion ID: ${attributeConfig.id.get(infusion)}`,
         colSpan: 2,
         fillColor: '#F0F0F0',
-        bold: true
+        bold: true,
       },
-      {}
-    ]);
+      {},
+    ])
 
     // Data rows
-    keysToShow.forEach(key => {
+    keysToShow.forEach((key) => {
       // skip `id` itself since it's in the header
-      if (key === 'id') return;
-      const cfg = attributeConfig[key];
-      rows.push([
-        { text: cfg.label + ':', bold: true },
-        { text: String(cfg.get(infusion)) }
-      ]);
-    });
+      if (key === 'id') return
+      const cfg = attributeConfig[key]
+      rows.push([{ text: cfg.label + ':', bold: true }, { text: String(cfg.get(infusion)) }])
+    })
 
     // Push the table with very small margins
     doc.content.push({
       table: {
         widths: ['30%', '70%'],
-        body: rows
+        body: rows,
       },
       layout: 'lightHorizontalLines',
-      margin: [0, 2, 0, 6]
-    });
+      margin: [0, 2, 0, 6],
+    })
   }
 
   // Define styles
   doc.styles = {
     header: {
       fontSize: 16,
-      bold: true
-    }
-  };
+      bold: true,
+    },
+  }
 
   // Finally download
-  pdfMake.createPdf(doc).download(`${Date.now()}_work_order.pdf`);
+  pdfMake.createPdf(doc).download(`${Date.now()}_work_order.pdf`)
 }
 
 // radio button attributes adn functions
@@ -375,16 +374,12 @@ const selectedAttributes = ref([])
       <footer class="flex flex-col gap-2 px-4 py-4 border-t border-gray-200">
         <slot name="footer"></slot>
 
-        <select
-          v-model="selectedPDF"
-          class="border border-gray-300 rounded px-2 py-1 col-span-11"
-        >
+        <select v-model="selectedPDF" class="border border-gray-300 rounded px-2 py-1 col-span-11">
           <option :value="true">export to pdf</option>
           <option :value="false">export to excel</option>
         </select>
 
         <p>Selected: {{ selectedPDF }}</p>
-
 
         <button
           type="button"
