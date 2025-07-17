@@ -186,7 +186,19 @@ watch(afdeling, (newAfdeling) => {
   }
   filterAllInfusionsNoMap(newAfdeling)
   excecuteFilters()
-  exportCurrent.value = false
+  const allInPdfStore = currentInfusions.value.every(item => {
+    if (Array.isArray(item.pumps)) {
+      return item.pumps.every(pump => pdfStore.containsId(pump.id))
+    } else {
+      return pdfStore.containsId(item.id)
+    }
+  })
+  console.log('All currentInfusions in PDF store:', allInPdfStore)
+  if (allInPdfStore) {
+    exportCurrent.value = true
+  } else {
+    exportCurrent.value = false
+  }
 })
 
 // Function to filter current infusions with stack support
