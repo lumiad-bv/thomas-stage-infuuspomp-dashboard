@@ -483,8 +483,8 @@ watch(searchId, (newSearchId) => {
           if (type === 'bed' && pump.bed && pump.bed.toLowerCase().includes(searchValue)) return true
           if (type === 'drug' && pump.drug && pump.drug.toLowerCase().includes(searchValue)) return true
           if (type === 'softwareVersion' && pump.softwareVersion && pump.softwareVersion.toLowerCase().includes(searchValue)) return true
-          if (type === 'medicalLibraryVersion' && pump.medicalLibraryVersion && pump.medicalLibraryVersion.toLowerCase().includes(searchValue)) return true
-          return false
+          return !!(type === 'medicalLibraryVersion' && pump.medicalLibraryVersion && pump.medicalLibraryVersion.toLowerCase().includes(searchValue));
+
         })
       } else {
         if (type === 'id' && infusion.id && infusion.id.toLowerCase().includes(searchValue)) return true
@@ -495,8 +495,7 @@ watch(searchId, (newSearchId) => {
         if (type === 'bed' && infusion.bed && infusion.bed.toLowerCase().includes(searchValue)) return true
         if (type === 'drug' && infusion.drug && infusion.drug.toLowerCase().includes(searchValue)) return true
         if (type === 'softwareVersion' && infusion.softwareVersion && infusion.softwareVersion.toLowerCase().includes(searchValue)) return true
-        if (type === 'medicalLibraryVersion' && infusion.medicalLibraryVersion && infusion.medicalLibraryVersion.toLowerCase().includes(searchValue)) return true
-        return false
+        return !!(type === 'medicalLibraryVersion' && infusion.medicalLibraryVersion && infusion.medicalLibraryVersion.toLowerCase().includes(searchValue));
       }
     })
     updateInfusions(filteredInfusions)
