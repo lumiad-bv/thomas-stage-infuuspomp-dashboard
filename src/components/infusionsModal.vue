@@ -294,7 +294,7 @@ function getDetailOptions(choice) {
   console.log(choice)
   const getValuesByKey  = useInfusionValueStore();
   if (!choice) return [];
-  return getValuesByKey.getInfusionValuesByValue(choice);
+  return getValuesByKey.getInfusionValuesByAttribute(choice);
 }
 const selectedAttributes = ref([])
 </script>

@@ -11,8 +11,8 @@ import { defineStore } from 'pinia';
       getInfusionValues() {
         return this.infusionValues;
       },
-      getInfusionValuesByValue(value) {
-        return this.infusionValues.filter((infusion) => infusion.value === value);
+      getInfusionValuesByAttribute(attribute) {
+        return this.infusionValues[attribute] || [];
       }
     },
   });
