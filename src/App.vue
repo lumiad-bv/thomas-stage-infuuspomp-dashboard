@@ -194,11 +194,7 @@ watch(afdeling, (newAfdeling) => {
     }
   })
   console.log('All currentInfusions in PDF store:', allInPdfStore)
-  if (allInPdfStore) {
-    exportCurrent.value = true
-  } else {
-    exportCurrent.value = false
-  }
+  exportCurrent.value = !!allInPdfStore;
 })
 
 // Function to filter current infusions with stack support
