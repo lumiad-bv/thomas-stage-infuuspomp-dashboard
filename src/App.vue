@@ -106,7 +106,7 @@ onMounted(() => {
   selectedButtoneStore.setCurrentDepartment('All departments')
   selectedButtoneStore.setCurrentFloor('overview')
 })
-const sortChoice = ref(null)
+const sortChoice = ref('')
 // a save location for the previous sorting choice to permit sorting in reverse
 
 // Functions to filter infusions based on afdeling (department)
@@ -435,7 +435,7 @@ function reverse() {
   updateInfusions(currentInfusions.value.reverse())
 }
 const toggleGroupItemClasses =
-  'hover:bg-gray-200  data-[state=on]:bg-blue-500 data-[state=on]:text-white  flex h-[35px] xl:w-[20vw] md:w-[35vw] w-[30vw] items-center justify-center bg-white text-base leading-4 first:rounded-l  last:rounded-r focus:z-10 focus:shadow-[0_0_0_2px] focus:shadow-black focus:outline-none dark:bg-gray-300 border-1 border-gray-300 dark:border-gray-600 dark:hover:bg-gray-400 dark:data-[state=on]:bg-gray-400 '
+  'hover:bg-gray-200  data-[state=on]:bg-blue-500 data-[state=on]:text-white data-[state=on]:hover:bg-blue-300 flex h-[35px] xl:w-[20vw] md:w-[35vw] w-[30vw] items-center justify-center bg-white text-base leading-4 first:rounded-l  last:rounded-r focus:z-10 focus:shadow-[0_0_0_2px] focus:shadow-black focus:outline-none dark:bg-gray-300 border-1 border-gray-300 dark:border-gray-600 dark:hover:bg-gray-400 dark:data-[state=on]:bg-gray-400 '
 
 const axiosInfusionPumps = ref([])
 
@@ -636,7 +636,7 @@ console.log(axiosInfusionPumps)
             v-model="sortChoice"
             class="hover:bg-gray-200 w-[78vw] col-span-6 xl:w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-300 dark:border-gray-600 dark:hover:bg-gray-400 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
           >
-            <option selected disabled>Sort by</option>
+            <option value=""  disabled >Sort by</option>
             <option value="remainingMl">remaining %IV</option>
             <option value="time">Remaining time</option>
             <option value="department">Department</option>
@@ -646,14 +646,14 @@ console.log(axiosInfusionPumps)
           <Toggle
             v-model:pressed="toggleState"
             aria-label="Toggle italic"
-            class="hover:bg-gray-200 text-black data-[state=on]:bg-blue-500 data-[state=on]:text-white flex items-center justify-center rounded bg-gray-50 border border-gray-300"
+            class="hover:bg-gray-200 text-black data-[state=on]:bg-blue-500 data-[state=on]:hover:bg-blue-300 data-[state=on]:text-white flex items-center justify-center rounded bg-gray-50 border border-gray-300"
           >
             <Icon icon="radix-icons:caret-sort" class="color-black" />
           </Toggle>
           <Toggle
             v-model:pressed="exportCurrent"
             aria-label="Toggle italic"
-            class="hover:bg-gray-200 text-black data-[state=on]:bg-green-500 data-[state=on]:text-white flex items-center justify-center rounded bg-gray-50 border border-gray-300"
+            class="hover:bg-gray-200 text-black data-[state=on]:bg-green-500 data-[state=on]:hover:bg-green-300 data-[state=on]:text-white flex items-center justify-center rounded bg-gray-50 border border-gray-300"
           >
             <h1>Export current</h1>
           </Toggle>
