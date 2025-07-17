@@ -21,6 +21,11 @@ watch(selectedPDF.value, (value) => {
   console.log(value)
 })
 
+const attributeChoice = ref('')
+const attributeDetailChoice = ref('')
+function exportSelection(){
+  console.log('hello world!')
+}
 /**
  * Returns a new array of infusions sorted by the given key or custom comparator.
  */
@@ -161,7 +166,7 @@ function exportInfusionDetailsExcel() {
   zipcelx(config)
 }
 
-function printInfusionDetails() {
+function exportInfusionDetailsPDF() {
   const doc = {
     content: [],
   }
@@ -274,13 +279,24 @@ const attributes = [
   { value: 'medicalLibraryVersion', label: 'Medical Library Version' },
 ]
 
+const exportAttributes = [
+  { value: 'floor', label: 'Floor' },
+  { value: 'drug', label: 'Drug' },
+  { value: 'totalMl', label: 'Total ml' },
+  { value: 'remainingMl', label: 'Remaining ml' },
+  { value: 'timeRemaining', label: 'Time remaining' },
+  { value: 'softwareVersion', label: 'Software Version' },
+  { value: 'medicalLibraryVersion', label: 'Medical Library Version' },
+]
+
+
 const selectedAttributes = ref([])
 </script>
 
 <template>
   <div class="fixed inset-0 bg-black/70 flex justify-center items-center z-50">
     <div
-      class="bg-white shadow-2xl overflow-x-auto flex flex-col max-w-3xl w-full rounded-md h-[90vh]"
+      class="bg-white shadow-2xl overflow-x-auto flex flex-col max-w-3xl w-full rounded-md h-[95vh]"
     >
       <!-- Header -->
       <header
@@ -295,7 +311,33 @@ const selectedAttributes = ref([])
           ×
         </button>
       </header>
-
+      <div class="flex items-center gap-4 mb-2">
+        <span class="pl-5">Export all infusions with</span>
+        <select
+          v-model="attributeChoice"
+          class="hover:bg-gray-200 w-auto xl:w-auto bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 dark:bg-gray-300 dark:border-gray-600 dark:hover:bg-gray-400 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
+        >
+          <option value="" disabled>value</option>
+          <option v-for="attr in exportAttributes" :key="attr.value" :value="attr.value">{{ attr.label }}</option>
+        </select>
+        <select
+          v-model="attributeDetailChoice"
+          class="hover:bg-gray-200 w-auto xl:w-auto bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 dark:bg-gray-300 dark:border-gray-600 dark:hover:bg-gray-400 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
+        >
+          <option value="" disabled>Sort by</option>
+          <option value="remainingMl">remaining %IV</option>
+          <option value="time">Remaining time</option>
+          <option value="department">Department</option>
+          <option value="bed">bed</option>
+          <option value="drug">Drug</option>
+        </select>
+        <div
+          class="bg-green-600 hover:bg-green-400   w-[5vw] h-[3.5vh] mr-2 ml-2 items-center justify-center rounded-lg flex text-white cursor-pointer text-center"
+          @click="exportSelection"
+        >
+          export
+        </div>
+      </div>
       <!-- Infusion items -->
       <div
         class="4xl:m-2 md:m-1 m-1 4xl:h-[80vh] xl:h-[70vh] md:h-[70.2vh] h-[71.3vh] border-1 border-b-gray-600 overflow-auto"
@@ -354,7 +396,7 @@ const selectedAttributes = ref([])
           </Toggle>
 
           <fieldset class="p-1 bg-white rounded-lg shadow-sm col-span-12">
-            <legend class="mb-1">Choose attributes</legend>
+            <legend class="mb-1">Choose attributes to display in report</legend>
             <div class="grid grid-cols-2 auto-cols-auto grid-flow-row gap-x-3">
               <label v-for="opt in attributes" :key="opt.value" class="flex items-center space-x-2">
                 <input
@@ -379,12 +421,11 @@ const selectedAttributes = ref([])
           <option :value="false">export to excel</option>
         </select>
 
-        <p>Selected: {{ selectedPDF }}</p>
 
         <button
           type="button"
           class="text-white bg-blue-600 border border-blue-600 rounded px-4 py-2 hover:bg-blue-500 transition cursor-pointer"
-          @click="selectedPDF ? printInfusionDetails() : exportInfusionDetailsExcel()"
+          @click="selectedPDF ? exportInfusionDetailsPDF() : exportInfusionDetailsExcel()"
         >
           Export Infusion Details
         </button>
