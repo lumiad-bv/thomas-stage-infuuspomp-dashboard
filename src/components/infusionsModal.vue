@@ -289,7 +289,27 @@ const exportAttributes = [
   { value: 'medicalLibraryVersion', label: 'Medical Library Version' },
 ]
 
-
+function getDetailOptions(choice) {
+  if (!choice) return [];
+  switch (choice) {
+    case 'floor':
+      return ['1', '2', '3', '4', '5'];
+    case 'drug':
+      return ['Paracetamol', 'Ibuprofen', 'Morphine'];
+    case 'totalMl':
+      return ['50', '100', '250', '500'];
+    case 'remainingMl':
+      return ['10', '20', '30', '40'];
+    case 'timeRemaining':
+      return ['00:10', '00:30', '01:00', '02:00'];
+    case 'softwareVersion':
+      return ['v1.0', 'v2.0', 'v3.0'];
+    case 'medicalLibraryVersion':
+      return ['2023A', '2023B', '2024A'];
+    default:
+      return [];
+  }
+}
 const selectedAttributes = ref([])
 </script>
 
@@ -321,16 +341,19 @@ const selectedAttributes = ref([])
           <option v-for="attr in exportAttributes" :key="attr.value" :value="attr.value">{{ attr.label }}</option>
         </select>
         <select
-          v-model="attributeDetailChoice"
-          class="hover:bg-gray-200 w-auto xl:w-auto bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 dark:bg-gray-300 dark:border-gray-600 dark:hover:bg-gray-400 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
-        >
-          <option value="" disabled>Sort by</option>
-          <option value="remainingMl">remaining %IV</option>
-          <option value="time">Remaining time</option>
-          <option value="department">Department</option>
-          <option value="bed">bed</option>
-          <option value="drug">Drug</option>
-        </select>
+            v-model="attributeDetailChoice"
+            :disabled="attributeChoice === ''"
+            class="hover:bg-gray-200 w-auto xl:w-auto bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 dark:bg-gray-300 dark:border-gray-600 dark:hover:bg-gray-400 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
+          >
+            <option value="" disabled>value</option>
+            <option
+              v-for="opt in getDetailOptions(attributeChoice)"
+              :key="opt"
+              :value="opt"
+            >
+              {{ opt }}
+            </option>
+          </select>
         <div
           class="bg-green-600 hover:bg-green-400   w-[5vw] h-[3.5vh] mr-2 ml-2 items-center justify-center rounded-lg flex text-white cursor-pointer text-center"
           @click="exportSelection"
